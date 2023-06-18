@@ -1,0 +1,5 @@
+export enum BLOG_CATEGORY {
+  BLOG = "BLOG",
+  IMPORTANT = "IMPORTANT",
+  NEWS = "NEWS",
+}
