@@ -14,10 +14,9 @@ import {
   Lockup,
   PublicKey,
   StakeProgram,
-  SystemProgram,
   Transaction,
-  sendAndConfirmTransaction,
 } from "@solana/web3.js";
+import { useStake } from "@context";
 
 export function Validators() {
   const { classes } = useValidatorsStyles();
@@ -27,6 +26,10 @@ export function Validators() {
   const { connection } = useConnection();
 
   const wallet = useWallet();
+
+  const { stakeAccountInfos } = useStake();
+
+  console.log(111, stakeAccountInfos);
 
   useEffect(() => {
     const asyncCall = async () => {
@@ -48,43 +51,37 @@ export function Validators() {
     if (wallet && wallet.publicKey) {
       const transaction = new Transaction();
 
-      // const tx = SystemProgram.transfer({
-      //   fromPubkey: wallet.publicKey,
-      //   toPubkey: new PublicKey("mqmcCCaaYQRVoGu1KssXBQjCRRu1XECNatFJHT5Spoj"),
-      //   lamports: LAMPORTS_PER_SOL * 0.01,
-      // });
-
-      // const tx = await solanaService.createStakeAccountTx(wallet.publicKey, 0.01 * LAMPORTS_PER_SOL);
-
       const stakeAccount = Keypair.generate();
 
-      const createStakeAccountInstruction = StakeProgram.createAccount({
-        authorized: new Authorized(wallet.publicKey, wallet.publicKey), // Here we set two authorities: Stake Authority and Withdrawal Authority. Both are set to our wallet.
+      transaction.add(StakeProgram.createAccount({
+        authorized: new Authorized(wallet.publicKey, wallet.publicKey),
         fromPubkey: wallet.publicKey,
         lamports: 0.01 * LAMPORTS_PER_SOL,
-        lockup: new Lockup(0, 0, wallet.publicKey), // Optional. We'll set this to 0 for demonstration purposes.
+        lockup: new Lockup(0, 0, wallet.publicKey),
         stakePubkey: stakeAccount.publicKey,
-      });
+      }));
 
-      // const { blockhash } = await connection.getRecentBlockhash();
-      // tx.recentBlockhash = blockhash;
-      // tx.feePayer = wallet.publicKey;
-
-      const stakeTransactionInstruction = StakeProgram.delegate({
+      transaction.add(StakeProgram.delegate({
         stakePubkey: stakeAccount.publicKey,
         authorizedPubkey: wallet.publicKey,
         votePubkey: new PublicKey(votePubkey),
-      });
+      }));
 
-      transaction.add(createStakeAccountInstruction, stakeTransactionInstruction);
+      const foundStakeAccountInfo = stakeAccountInfos.find(info => info.validator === votePubkey);
 
-      // const signedTransaction = await wallet!.signTransaction(tx);
+      if (foundStakeAccountInfo) {
+        console.log(222, foundStakeAccountInfo.stakeAccount);
+        transaction.add(StakeProgram.merge({
+          sourceStakePubKey: stakeAccount.publicKey,
+          stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
+          authorizedPubkey: wallet.publicKey,
+        }));
+      }
 
       const sig = await wallet.sendTransaction(transaction, connection, {
         signers: [stakeAccount],
       });
-      // const sig = await sendAndConfirmTransaction(connection, transaction, [wallet, stakeAccount]);
-      // const sig = await connection.sendRawTransaction(signedTransaction.serialize());
+
       console.log(777, sig);
     }
   };

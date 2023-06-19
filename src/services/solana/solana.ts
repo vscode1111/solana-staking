@@ -48,7 +48,8 @@ export class Solana {
         return info;
       }),
     );
-    return result;
+    const sortedResult = result.sort((a, b) => b.activeStake - a.activeStake);
+    return sortedResult;
   }
 
   public async getRewards(
@@ -86,7 +87,8 @@ export class Solana {
 
   public async getCurrentValidators(limit?: number) {
     const { current } = await this.connection.getVoteAccounts("recent");
-    return limit ? current.slice(0, limit).map(mapValidatorFn) : current.map(mapValidatorFn);
+    const sortedCurrent = current.sort((a, b) => b.activatedStake - a.activatedStake);
+    return limit ? sortedCurrent.slice(0, limit).map(mapValidatorFn) : sortedCurrent.map(mapValidatorFn);
   }
 
   public async createStakeAccountTx(
@@ -103,15 +105,29 @@ export class Solana {
       stakePubkey: stakeAccount.publicKey,
     });
 
-    // const createStakeAccountTxId = await sendAndConfirmTransaction(
-    //   this.connection,
-    //   createStakeAccountTx,
-    //   [
-    //     // wallet,
-    //     stakeAccount, // Since we're creating a new stake account, we have that account sign as well
-    //   ],
-    // );
-
     return createStakeAccountTx;
+  }
+
+  public async getDelegatorByValidator(
+    validatorPublicKey: string,
+  ) {
+    const STAKE_PROGRAM_ID = new PublicKey(
+      "Stake11111111111111111111111111111111111111"
+    );
+
+    const accounts = await this.connection.getParsedProgramAccounts(STAKE_PROGRAM_ID, {
+      filters: [
+        {
+          dataSize: 200, // number of bytes
+        },
+        {
+          memcmp: {
+            offset: 124, // number of bytes
+            bytes: validatorPublicKey, // base58 encoded string
+          },
+        },
+      ],
+    });
+    return accounts;
   }
 }

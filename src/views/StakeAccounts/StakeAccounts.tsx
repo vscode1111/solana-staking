@@ -7,6 +7,8 @@ import { uid } from "react-uid";
 import { Loader } from "@components";
 import { ROUTE } from "@consts";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { printJson } from "@utils";
+import { useStake } from "@context";
 
 export function StakeAccounts() {
   const { classes } = useStakeAccountsStyles();
@@ -15,13 +17,17 @@ export function StakeAccounts() {
 
   const wallet = useWallet();
 
+  const stake = useStake();
+
   useEffect(() => {
     const asyncCall = async () => {
       if (wallet.connected && wallet.publicKey) {
         setLoading(true);
         try {
           const stakeAccountInfo = await solanaService.getStakeAccountInfos(wallet.publicKey);
+          console.log(printJson(stakeAccountInfo));
           setStakeAccountInfos(stakeAccountInfo);
+          stake.setStakeAccountInfos(stakeAccountInfo);
         } catch (e) {
           console.log(e);
         }
@@ -29,7 +35,7 @@ export function StakeAccounts() {
       }
     };
     asyncCall();
-  }, [wallet]);
+  }, [wallet, stake]);
 
   return (
     <div className={classes.root}>

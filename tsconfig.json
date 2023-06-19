@@ -30,6 +30,8 @@
       "@components/*": ["./components/*"],
       "@consts": ["./consts"],
       "@consts/*": ["./consts/*"],
+      "@context": ["./context"],
+      "@context/*": ["./consts/*"],
       "@hooks": ["./hooks"],
       "@hooks/*": ["./hooks/*"],
       "@services": ["./services"],
@@ -38,6 +40,8 @@
       "@themes/*": ["./themes/*"],
       "@types": ["./types"],
       "@types/*": ["./types/*"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"],
       "@views": ["./views"],
       "@views/*": ["./views/*"]
     },

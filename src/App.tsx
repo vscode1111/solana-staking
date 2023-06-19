@@ -14,6 +14,7 @@ import {
   SolflareWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { StakeProvider } from "@context";
 
 export function App() {
   const network = WalletAdapterNetwork.Mainnet;
@@ -30,7 +31,9 @@ export function App() {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets}>
           <WalletModalProvider>
-            <MainRouter />
+            <StakeProvider>
+              <MainRouter />
+            </StakeProvider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
