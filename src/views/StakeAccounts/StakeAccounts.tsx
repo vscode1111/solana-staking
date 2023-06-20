@@ -35,7 +35,7 @@ export function StakeAccounts() {
       }
     };
     asyncCall();
-  }, [wallet, stake]);
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -43,9 +43,9 @@ export function StakeAccounts() {
         <Link to={`/`}>
           <Button>Back</Button>
         </Link>
-        <Link to={`/${ROUTE.VALIDATORS}`}>
+        {!isLoading && <Link to={`/${ROUTE.VALIDATORS}`}>
           <Button>Add</Button>
-        </Link>
+        </Link>}
       </div>
       <div className={classes.content}>
         {isLoading ? (

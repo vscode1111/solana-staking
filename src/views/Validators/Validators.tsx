@@ -17,11 +17,13 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { useStake } from "@context";
+import { useNavigate } from "react-router-dom";
 
 export function Validators() {
   const { classes } = useValidatorsStyles();
   const [validators, setValidators] = useState<ValidatorInfo[]>([]);
   const [isLoading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const { connection } = useConnection();
 
@@ -29,9 +31,15 @@ export function Validators() {
 
   const { stakeAccountInfos } = useStake();
 
-  console.log(111, stakeAccountInfos);
+  console.log(111, wallet.connected, wallet.publicKey);
+
+  console.log(777, stakeAccountInfos);
 
   useEffect(() => {
+    if (!wallet.connected) {
+      navigate('/');
+    }
+
     const asyncCall = async () => {
       if (wallet.connected && wallet.publicKey) {
         setLoading(true);

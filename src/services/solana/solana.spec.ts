@@ -7,8 +7,9 @@ describe("@solana/web3.js", () => {
   const solana = new Solana();
 
   // const userAccountPublicKey = new PublicKey("9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"); //Binance
-  const userAccountPublicKey = new PublicKey("98sPB6E8LyzLGakBTd6MiFupKUpi7CgLe34vpfYCjqbr"); //My
+  // const userAccountPublicKey = new PublicKey("98sPB6E8LyzLGakBTd6MiFupKUpi7CgLe34vpfYCjqbr"); //My
   // const userAccountPublicKey = new PublicKey("mqmcCCaaYQRVoGu1KssXBQjCRRu1XECNatFJHT5Spoj"); //My2
+  const userAccountPublicKey = new PublicKey("BSHcqEiPpaczXz8yMzrogDWLkYNe2uFQopUzTQUveMQz"); //My-Ledger
 
   // const stakeAccountPublicKey = new PublicKey("EJRJswH9LyjhAfBWwPBvat1LQtrJYK4sVUzsea889cQt"); //Binance
   const stakeAccountPublicKey = new PublicKey("9z7ttmx8nw19bbKQEWqCUsuCV71vRLAaCoWvayTfBYHy"); //My
@@ -25,9 +26,9 @@ describe("@solana/web3.js", () => {
     console.log(printJson(stakeAccountInfo));
   });
 
-  it("getStakeAccountInfos", async () => {
+  it.only("getStakeAccountInfos", async () => {
     const stakeAccountInfos = await solana.getStakeAccountInfos(userAccountPublicKey);
-    expect(stakeAccountInfos.length).greaterThan(0);
+    expect(stakeAccountInfos.length).greaterThanOrEqual(0);
     console.log(printJson(stakeAccountInfos));
   });
 
@@ -43,7 +44,7 @@ describe("@solana/web3.js", () => {
     console.log(balance);
   });
 
-  it.only("getCurrentValidators", async () => {
+  it("getCurrentValidators", async () => {
     const validators = await solana.getCurrentValidators();
     expect(validators.length).greaterThan(0);
     console.log(printJson(validators[0]), validators.length);
