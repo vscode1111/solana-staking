@@ -8,5 +8,6 @@ export const useHomeStyles = makeStyles()(() => ({
     height: 25,
     padding: "3px 12px 8px",
     borderRadius: 8,
+    marginTop: 50,
   },
 }));

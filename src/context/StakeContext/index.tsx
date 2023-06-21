@@ -1,7 +1,4 @@
-import {
-  ComponentProps,
-  createContext, useContext, useMemo, useState,
-} from 'react';
+import { ComponentProps, createContext, useContext, useMemo, useState } from "react";
 
 import { StakeAccount } from "@services";
 
@@ -23,13 +20,12 @@ export function useStake() {
   return context;
 }
 
-export function StakeProvider(
-  props: ComponentProps<any>
-) {
+export function StakeProvider(props: ComponentProps<any>) {
   const [stakeAccountInfos, setStakeAccountInfos] = useState<StakeAccount[]>([]);
-  const stakeAccountInfosValue = useMemo(() => ({ stakeAccountInfos, setStakeAccountInfos }), [
-    stakeAccountInfos,
-  ]);
+  const stakeAccountInfosValue = useMemo(
+    () => ({ stakeAccountInfos, setStakeAccountInfos }),
+    [stakeAccountInfos],
+  );
 
   return (
     <StakeContext.Provider

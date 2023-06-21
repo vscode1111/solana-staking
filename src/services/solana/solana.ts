@@ -6,10 +6,12 @@ import {
   ParsedAccountData,
   PublicKey,
   StakeProgram,
+  TransactionConfirmationStatus,
   clusterApiUrl,
 } from "@solana/web3.js";
 import { InflationRewardNull, ParsedAccountInfo, RewardNull, StakeAccount } from "./types";
 import { mapAccountFn, mapRewardFn, mapValidatorFn } from "./utils";
+import { sleep } from "@utils";
 
 export class Solana {
   private connection: Connection;
@@ -88,13 +90,12 @@ export class Solana {
   public async getCurrentValidators(limit?: number) {
     const { current } = await this.connection.getVoteAccounts("recent");
     const sortedCurrent = current.sort((a, b) => b.activatedStake - a.activatedStake);
-    return limit ? sortedCurrent.slice(0, limit).map(mapValidatorFn) : sortedCurrent.map(mapValidatorFn);
+    return limit
+      ? sortedCurrent.slice(0, limit).map(mapValidatorFn)
+      : sortedCurrent.map(mapValidatorFn);
   }
 
-  public async createStakeAccountTx(
-    userAccountPublicKey: PublicKey,
-    amountToStake: number,
-  ) {
+  public async createStakeAccountTx(userAccountPublicKey: PublicKey, amountToStake: number) {
     const stakeAccount = Keypair.generate();
 
     const createStakeAccountTx = StakeProgram.createAccount({
@@ -108,12 +109,8 @@ export class Solana {
     return createStakeAccountTx;
   }
 
-  public async getDelegatorByValidator(
-    validatorPublicKey: string,
-  ) {
-    const STAKE_PROGRAM_ID = new PublicKey(
-      "Stake11111111111111111111111111111111111111"
-    );
+  public async getDelegatorByValidator(validatorPublicKey: string) {
+    const STAKE_PROGRAM_ID = new PublicKey("Stake11111111111111111111111111111111111111");
 
     const accounts = await this.connection.getParsedProgramAccounts(STAKE_PROGRAM_ID, {
       filters: [
@@ -129,5 +126,32 @@ export class Solana {
       ],
     });
     return accounts;
+  }
+
+  public async getSignatureStatus(txSignature: string) {
+    return await this.connection.getSignatureStatus(txSignature);
+  }
+
+  public async waitSignatureStatus(
+    txSignature: string,
+    status: TransactionConfirmationStatus = "finalized",
+    // status: TransactionConfirmationStatus = 'confirmed',
+    delayMs = 5000,
+    maxAttempts = 10,
+  ) {
+    for (let i = 0; i < maxAttempts; i++) {
+      const txStatus = await this.getSignatureStatus(txSignature);
+
+      console.log(111, txStatus);
+
+      // if (txStatus.value?.confirmationStatus === status || txStatus.value === null) {
+      if (txStatus.value?.confirmationStatus === status) {
+        return txStatus;
+      }
+
+      await sleep(delayMs);
+    }
+
+    throw new Error('Reached the maximum number of attempts')
   }
 }

@@ -19,6 +19,8 @@ import {
 import { useStake } from "@context";
 import { useNavigate } from "react-router-dom";
 
+const SEPARATE_TX = true;
+
 export function Validators() {
   const { classes } = useValidatorsStyles();
   const [validators, setValidators] = useState<ValidatorInfo[]>([]);
@@ -37,7 +39,7 @@ export function Validators() {
 
   useEffect(() => {
     if (!wallet.connected) {
-      navigate('/');
+      navigate("/");
     }
 
     const asyncCall = async () => {
@@ -57,40 +59,71 @@ export function Validators() {
 
   const handleClick = async (votePubkey: string) => {
     if (wallet && wallet.publicKey) {
-      const transaction = new Transaction();
+      const transaction1 = new Transaction();
 
       const stakeAccount = Keypair.generate();
 
-      transaction.add(StakeProgram.createAccount({
-        authorized: new Authorized(wallet.publicKey, wallet.publicKey),
-        fromPubkey: wallet.publicKey,
-        lamports: 0.01 * LAMPORTS_PER_SOL,
-        lockup: new Lockup(0, 0, wallet.publicKey),
-        stakePubkey: stakeAccount.publicKey,
-      }));
+      transaction1.add(
+        StakeProgram.createAccount({
+          authorized: new Authorized(wallet.publicKey, wallet.publicKey),
+          fromPubkey: wallet.publicKey,
+          lamports: 0.01 * LAMPORTS_PER_SOL,
+          lockup: new Lockup(0, 0, wallet.publicKey),
+          stakePubkey: stakeAccount.publicKey,
+        }),
+      );
 
-      transaction.add(StakeProgram.delegate({
-        stakePubkey: stakeAccount.publicKey,
-        authorizedPubkey: wallet.publicKey,
-        votePubkey: new PublicKey(votePubkey),
-      }));
-
-      const foundStakeAccountInfo = stakeAccountInfos.find(info => info.validator === votePubkey);
-
-      if (foundStakeAccountInfo) {
-        console.log(222, foundStakeAccountInfo.stakeAccount);
-        transaction.add(StakeProgram.merge({
-          sourceStakePubKey: stakeAccount.publicKey,
-          stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
+      transaction1.add(
+        StakeProgram.delegate({
+          stakePubkey: stakeAccount.publicKey,
           authorizedPubkey: wallet.publicKey,
-        }));
+          votePubkey: new PublicKey(votePubkey),
+        }),
+      );
+
+      const foundStakeAccountInfo = stakeAccountInfos.find((info) => info.validator === votePubkey);
+
+      if (!SEPARATE_TX) {
+        if (foundStakeAccountInfo) {
+          console.log(222, foundStakeAccountInfo.stakeAccount);
+          transaction1.add(
+            StakeProgram.merge({
+              sourceStakePubKey: stakeAccount.publicKey,
+              stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
+              authorizedPubkey: wallet.publicKey,
+            }),
+          );
+        }
       }
 
-      const sig = await wallet.sendTransaction(transaction, connection, {
+      const signature1 = await wallet.sendTransaction(transaction1, connection, {
         signers: [stakeAccount],
       });
 
-      console.log(777, sig);
+      console.log(777, signature1);
+
+      let txStatus = await solanaService.waitSignatureStatus(signature1);
+      console.log(888, txStatus);
+
+      if (SEPARATE_TX) {
+        const transaction2 = new Transaction();
+
+        if (foundStakeAccountInfo) {
+          console.log(222, foundStakeAccountInfo.stakeAccount);
+          transaction2.add(
+            StakeProgram.merge({
+              sourceStakePubKey: stakeAccount.publicKey,
+              stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
+              authorizedPubkey: wallet.publicKey,
+            }),
+          );
+        }
+
+        const signature2 = await wallet.sendTransaction(transaction2, connection);
+
+        txStatus = await solanaService.waitSignatureStatus(signature2);
+        console.log(999, txStatus);
+      }
     }
   };
 

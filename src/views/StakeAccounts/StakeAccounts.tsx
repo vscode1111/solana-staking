@@ -43,9 +43,11 @@ export function StakeAccounts() {
         <Link to={`/`}>
           <Button>Back</Button>
         </Link>
-        {!isLoading && <Link to={`/${ROUTE.VALIDATORS}`}>
-          <Button>Add</Button>
-        </Link>}
+        {!isLoading && (
+          <Link to={`/${ROUTE.VALIDATORS}`}>
+            <Button>Add</Button>
+          </Link>
+        )}
       </div>
       <div className={classes.content}>
         {isLoading ? (
