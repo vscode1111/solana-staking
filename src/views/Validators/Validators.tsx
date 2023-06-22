@@ -81,11 +81,11 @@ export function Validators() {
         }),
       );
 
-      const foundStakeAccountInfo = stakeAccountInfos.find((info) => info.validator === votePubkey);
+      const foundStakeAccountInfo = stakeAccountInfos.find((info) => info.validator === votePubkey && info.status.toLowerCase() === "activating");
+      console.log(222, foundStakeAccountInfo?.stakeAccount);
 
       if (!SEPARATE_TX) {
         if (foundStakeAccountInfo) {
-          console.log(222, foundStakeAccountInfo.stakeAccount);
           transaction1.add(
             StakeProgram.merge({
               sourceStakePubKey: stakeAccount.publicKey,
@@ -106,10 +106,8 @@ export function Validators() {
       console.log(888, txStatus);
 
       if (SEPARATE_TX) {
-        const transaction2 = new Transaction();
-
         if (foundStakeAccountInfo) {
-          console.log(222, foundStakeAccountInfo.stakeAccount);
+          const transaction2 = new Transaction();
           transaction2.add(
             StakeProgram.merge({
               sourceStakePubKey: stakeAccount.publicKey,
@@ -117,12 +115,12 @@ export function Validators() {
               authorizedPubkey: wallet.publicKey,
             }),
           );
+
+          const signature2 = await wallet.sendTransaction(transaction2, connection);
+          console.log(777, signature1);
+          txStatus = await solanaService.waitSignatureStatus(signature2);
+          console.log(999, txStatus);
         }
-
-        const signature2 = await wallet.sendTransaction(transaction2, connection);
-
-        txStatus = await solanaService.waitSignatureStatus(signature2);
-        console.log(999, txStatus);
       }
     }
   };

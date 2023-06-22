@@ -1,3 +1,2 @@
-export * from "./Connect2Phantom";
-export * from "./Loader";
-export * from "./MyWallet";
+export * from './Loader';
+export * from './WalletConnection';

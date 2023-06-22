@@ -1,51 +1,87 @@
 {
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "target": "es2019",
+    "module": "esnext",
+    "outDir": "lib/esm",
+    "declarationDir": "lib/types",
+    "noEmit": false,
+    "declaration": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "stripInternal": true,
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "strict": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
 
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
 
-    /* Misc */
-    "baseUrl": "./src",
-    "sourceMap": true,
-    "outDir": "./dist",
-
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     /* Paths */
     "paths": {
-      "@components": ["./components"],
-      "@components/*": ["./components/*"],
-      "@consts": ["./consts"],
-      "@consts/*": ["./consts/*"],
-      "@context": ["./context"],
-      "@context/*": ["./consts/*"],
-      "@hooks": ["./hooks"],
-      "@hooks/*": ["./hooks/*"],
-      "@services": ["./services"],
-      "@services/*": ["./services/*"],
-      "@themes": ["./themes"],
-      "@themes/*": ["./themes/*"],
-      "@types": ["./types"],
-      "@types/*": ["./types/*"],
-      "@utils": ["./utils"],
-      "@utils/*": ["./utils/*"],
-      "@views": ["./views"],
-      "@views/*": ["./views/*"]
+      "@components": [
+        "./src/components"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@consts": [
+        "./src/consts"
+      ],
+      "@consts/*": [
+        "./src/consts/*"
+      ],
+      "@context": [
+        "./src/context"
+      ],
+      "@context/*": [
+        "./src/consts/*"
+      ],
+      "@hooks": [
+        "./src/hooks"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@services": [
+        "./src/services"
+      ],
+      "@services/*": [
+        "./services/*"
+      ],
+      "@themes": [
+        "./src/themes"
+      ],
+      "@themes/*": [
+        "./src/themes/*"
+      ],
+      "@types": [
+        "./src/types"
+      ],
+      "@types/*": [
+        "./src/types/*"
+      ],
+      "@utils": [
+        "./src/utils"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@views": [
+        "./src/views"
+      ],
+      "@views/*": [
+        "./src/views/*"
+      ],
     },
-  },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  }
 }
