@@ -28,7 +28,6 @@ export function Validators() {
   const navigate = useNavigate();
 
   const { connection } = useConnection();
-
   const wallet = useWallet();
 
   const { stakeAccountInfos } = useStake();
@@ -67,7 +66,7 @@ export function Validators() {
         StakeProgram.createAccount({
           authorized: new Authorized(wallet.publicKey, wallet.publicKey),
           fromPubkey: wallet.publicKey,
-          lamports: 0.01 * LAMPORTS_PER_SOL,
+          lamports: 0.1 * LAMPORTS_PER_SOL,
           lockup: new Lockup(0, 0, wallet.publicKey),
           stakePubkey: stakeAccount.publicKey,
         }),

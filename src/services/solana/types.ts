@@ -48,6 +48,7 @@ export interface StakeAccount {
   solBalance?: number;
   status: string;
   activeStake: number;
+  activeStakeRaw: number;
   validator: string;
   rewardSol?: number;
 }

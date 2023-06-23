@@ -1,8 +1,6 @@
 import React, { FC, useMemo } from 'react';
-// import logo from "./logo.svg";
 import "./App.css";
 import "./styles.css";
-// require('@solana/wallet-adapter-react-ui/styles.css');
 import {
   ConnectionProvider,
   WalletProvider,
@@ -18,12 +16,10 @@ import {
   TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from "@solana/web3.js";
-import { MyWallet } from "@components/WalletConnection/WalletConnection";
 import { StakeProvider } from '@context';
 import { MainRouter } from '@views';
-// import twitterLogo from './assets/twitter-logo.svg'; 
-// import discordLogo from './assets/discord.png';
-// import logo from 'url:./assets/soluminati.png';
+import { ThemeProvider } from '@mui/material';
+import { theme } from '@themes';
 
 export const App: FC = () => {
   const network = WalletAdapterNetwork.Mainnet;
@@ -48,13 +44,15 @@ export const App: FC = () => {
   return (
     <div className="top-wrapper">
       <div className="App">
-        <ConnectionProvider endpoint={endpoint}>
-          <WalletProvider wallets={wallets}>
-            <StakeProvider>
-              <MainRouter />
-            </StakeProvider>
-          </WalletProvider>
-        </ConnectionProvider>
+        <ThemeProvider theme={theme}>
+          <ConnectionProvider endpoint={endpoint}>
+            <WalletProvider wallets={wallets}>
+              <StakeProvider>
+                <MainRouter />
+              </StakeProvider>
+            </WalletProvider>
+          </ConnectionProvider>
+        </ThemeProvider>
       </div>
     </div>
   );

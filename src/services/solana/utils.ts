@@ -13,6 +13,7 @@ export function mapAccountFn(
     solBalance: undefined,
     status: state.state,
     activeStake: Number(info.info.stake?.delegation?.stake ?? 0) / DECIMAL_FACTOR,
+    activeStakeRaw: Number(info.info.stake?.delegation?.stake ?? 0),
     validator: info.info.stake?.delegation?.voter ?? "",
     rewardSol: undefined,
   };

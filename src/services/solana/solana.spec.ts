@@ -21,7 +21,7 @@ describe("@solana/web3.js", () => {
   const txSignature =
   "25pQn4jt3x2pKXQNV6oBuTqK4268tScWrc8Ytuqr5kQwRnb44TfwjHoA7RbCfXEDU68RNQcVuXESptekN6kHX1Wb";
 
-  it("getStakeAccounts", async () => {
+  it.only("getStakeAccounts", async () => {
     const stakeAccounts = await solana.getStakeAccounts(userAccountPublicKey);
     expect(stakeAccounts.length).greaterThan(0);
     console.log(printJson(stakeAccounts));

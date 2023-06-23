@@ -1,87 +1,47 @@
 {
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
   "compilerOptions": {
-    "target": "es2019",
-    "module": "esnext",
-    "outDir": "lib/esm",
-    "declarationDir": "lib/types",
-    "noEmit": false,
-    "declaration": true,
-    "sourceMap": true,
-    "noEmitOnError": true,
-    "stripInternal": true,
-    "moduleResolution": "node",
-    "jsx": "preserve",
-    "strict": true,
-    "esModuleInterop": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
 
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
 
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    /* Misc */
+    "sourceMap": true,
+    "outDir": "./dist",
+
     /* Paths */
     "paths": {
-      "@components": [
-        "./src/components"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@consts": [
-        "./src/consts"
-      ],
-      "@consts/*": [
-        "./src/consts/*"
-      ],
-      "@context": [
-        "./src/context"
-      ],
-      "@context/*": [
-        "./src/consts/*"
-      ],
-      "@hooks": [
-        "./src/hooks"
-      ],
-      "@hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@services": [
-        "./src/services"
-      ],
-      "@services/*": [
-        "./services/*"
-      ],
-      "@themes": [
-        "./src/themes"
-      ],
-      "@themes/*": [
-        "./src/themes/*"
-      ],
-      "@types": [
-        "./src/types"
-      ],
-      "@types/*": [
-        "./src/types/*"
-      ],
-      "@utils": [
-        "./src/utils"
-      ],
-      "@utils/*": [
-        "./src/utils/*"
-      ],
-      "@views": [
-        "./src/views"
-      ],
-      "@views/*": [
-        "./src/views/*"
-      ],
+      "@components": ["./src/components"],
+      "@components/*": ["./src/components/*"],
+      "@consts": ["./src/consts"],
+      "@consts/*": ["./src/consts/*"],
+      "@hooks": ["./src/hooks"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@services": ["./src/services"],
+      "@services/*": ["./src/services/*"],
+      "@themes": ["./src/themes"],
+      "@themes/*": ["./src/themes/*"],
+      "@types": ["./src/types"],
+      "@types/*": ["./src/types/*"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"],
+      "@views": ["./src/views"],
+      "@views/*": ["./src/views/*"]
     },
-  }
+  },
+  "include": ["src"]
 }

@@ -4,9 +4,6 @@
   justify-content: space-between
 }
 
-.HeaderText {
-}
-
 .Logo {
   max-height: 200px;
 }
@@ -100,8 +97,4 @@
 .App {
   z-index: 100;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
 }

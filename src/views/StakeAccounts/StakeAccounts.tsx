@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Drawer } from "@mui/material";
 import { useStakeAccountsStyles } from "./useStakeAccountsStyles";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -9,11 +9,13 @@ import { ROUTE } from "@consts";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { printJson } from "@utils";
 import { useStake } from "@context";
+import { DrawerContent } from "./components";
 
 export function StakeAccounts() {
   const { classes } = useStakeAccountsStyles();
   const [stakeAccountInfos, setStakeAccountInfos] = useState<StakeAccount[]>([]);
   const [isLoading, setLoading] = useState(false);
+  const [stakeAccount, setStakeAccount] = useState<StakeAccount | null>(null);
 
   const wallet = useWallet();
 
@@ -55,10 +57,20 @@ export function StakeAccounts() {
         ) : (
           <>
             {stakeAccountInfos.map((info) => (
-              <Button key={uid(info)}>
+              <Button key={uid(info)} onClick={() => setStakeAccount(info)}>
                 {info.stakeAccount} - {info.status} - {info.activeStake?.toFixed(3)}
               </Button>
             ))}
+            <Drawer
+              anchor="bottom"
+              open={!!stakeAccount}
+              onClose={() => setStakeAccount(null)}
+            >
+              {stakeAccount && <DrawerContent
+                stakeAccount={stakeAccount}
+                onClose={() => setStakeAccount(null)}
+              />}
+            </Drawer>
           </>
         )}
       </div>
