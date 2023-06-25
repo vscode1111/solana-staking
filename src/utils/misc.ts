@@ -13,4 +13,3 @@ export function printError(error: any) {
 
   return error;
 }
-

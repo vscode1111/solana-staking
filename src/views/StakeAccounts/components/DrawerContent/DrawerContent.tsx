@@ -4,9 +4,10 @@ import { StakeAccount } from "@services";
 import { useMemo, useCallback } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, StakeProgram, Transaction } from "@solana/web3.js";
+import { printSol } from "@utils";
 
 interface DrawerContentProps {
-  stakeAccount: StakeAccount
+  stakeAccount: StakeAccount;
   onClose: () => void;
 }
 
@@ -16,8 +17,11 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
   const wallet = useWallet();
   console.log(111, stakeAccount);
 
-  const isDeactivateStake = useMemo(() => ["active", "activating"].includes(stakeAccount.status), [stakeAccount])
-  const isWithdrawStake = useMemo(() => ["inactive"].includes(stakeAccount.status) , [stakeAccount])
+  const isDeactivateStake = useMemo(
+    () => ["active", "activating"].includes(stakeAccount.status),
+    [stakeAccount],
+  );
+  const isWithdrawStake = useMemo(() => ["inactive"].includes(stakeAccount.status), [stakeAccount]);
 
   const handleDeactivateStake = useCallback(async () => {
     if (!wallet.publicKey) {
@@ -35,7 +39,7 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
 
     const signature1 = await wallet.sendTransaction(transaction1, connection);
     console.log(777, signature1);
-  }, [])
+  }, []);
 
   const handleWithdrawStake = useCallback(async () => {
     if (!wallet.publicKey) {
@@ -49,23 +53,23 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
         stakePubkey: new PublicKey(stakeAccount.stakeAccount),
         authorizedPubkey: wallet.publicKey,
         toPubkey: wallet.publicKey,
-        lamports: stakeAccount.activeStakeRaw,
-      })
+        lamports: stakeAccount.lamports,
+      }),
     );
 
     const signature1 = await wallet.sendTransaction(transaction1, connection);
-    console.log(777, signature1, stakeAccount.activeStakeRaw);
-  }, [])
+    console.log(777, signature1, stakeAccount.lamports);
+  }, []);
 
   return (
     <div className={classes.root}>
       <div className={classes.content}>
         <Typography variant="h6">Status: {stakeAccount.status}</Typography>
         <Typography variant="h6">Address: {stakeAccount.stakeAccount}</Typography>
-        <Typography variant="h6">Balance: {stakeAccount.activeStake} SOL</Typography>
+        <Typography variant="h6">Balance: {printSol(stakeAccount.lamports)} SOL</Typography>
       </div>
       <div className={classes.navigation}>
-        <Button onClick={onClose} >Back</Button>
+        <Button onClick={onClose}>Back</Button>
         {isDeactivateStake && <Button onClick={handleDeactivateStake}>Deactivate stake</Button>}
         {isWithdrawStake && <Button onClick={handleWithdrawStake}>Withdraw stake</Button>}
       </div>

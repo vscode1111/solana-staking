@@ -1,4 +1,4 @@
-import { InflationReward } from "@solana/web3.js";
+import { AccountInfo, InflationReward, ParsedAccountData, PublicKey } from "@solana/web3.js";
 
 //Solana interfaces
 export interface ParsedAccountInfo {
@@ -48,7 +48,7 @@ export interface StakeAccount {
   solBalance?: number;
   status: string;
   activeStake: number;
-  activeStakeRaw: number;
+  lamports: number;
   validator: string;
   rewardSol?: number;
 }
@@ -64,4 +64,9 @@ export interface ValidatorInfo {
   nodePubkey: string;
   activatedStake: number;
   commission: number;
+}
+
+export interface ProgramAccountInfo {
+  pubkey: PublicKey;
+  account: AccountInfo<Buffer | ParsedAccountData>;
 }

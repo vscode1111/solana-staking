@@ -11,7 +11,7 @@ import {
 } from "@solana/web3.js";
 import { InflationRewardNull, ParsedAccountInfo, RewardNull, StakeAccount } from "./types";
 import { mapAccountFn, mapRewardFn, mapValidatorFn } from "./utils";
-import { sleep } from "@utils";
+import { printJson, sleep } from "@utils";
 
 export class Solana {
   private connection: Connection;
@@ -36,16 +36,23 @@ export class Solana {
 
   public async getStakeAccountInfos(userAccountPublicKey: PublicKey) {
     const programId = StakeProgram.programId;
-    const programAccounts = await this.connection.getProgramAccounts(programId, {
+    const programAccounts = await this.connection.getParsedProgramAccounts(programId, {
       filters: [{ memcmp: { offset: 44, bytes: userAccountPublicKey.toBase58() } }],
     });
-    const stakeAccountPublicKeys = programAccounts.map((account) => new PublicKey(account.pubkey));
+    // const stakeAccountPublicKeys = programAccounts.map((account) => new PublicKey(account.pubkey));
+    // const stakeAccountPublicKeys2 = programAccounts.map((account) => (
+    //   {
+    //     pubkey: new PublicKey(account.pubkey),
+    //     lamports: (account as any).lamports,
+    //   })
+    //   );
+    console.log(111, printJson(programAccounts[0]));
     const result: StakeAccount[] = [];
     await Promise.all(
-      stakeAccountPublicKeys.map(async (key) => {
-        const info = await this.getAccountInfo(key);
-        const state = await this.connection.getStakeActivation(key);
-        const StakeAccount = mapAccountFn(key, info, state);
+      programAccounts.map(async (account) => {
+        const info = await this.getAccountInfo(account.pubkey);
+        const state = await this.connection.getStakeActivation(account.pubkey);
+        const StakeAccount = mapAccountFn(account, info, state);
         result.push(StakeAccount);
         return info;
       }),
@@ -152,8 +159,6 @@ export class Solana {
       await sleep(delayMs);
     }
 
-    throw new Error('Reached the maximum number of attempts')
+    throw new Error("Reached the maximum number of attempts");
   }
 }
-
-

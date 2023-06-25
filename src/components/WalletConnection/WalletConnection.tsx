@@ -1,12 +1,9 @@
-import { ROUTE } from '@consts';
-import { Button } from '@mui/material';
-import { solanaService } from '@services';
-import { useWallet } from '@solana/wallet-adapter-react';
-import {
-  WalletModalProvider,
-  WalletMultiButton,
-} from '@solana/wallet-adapter-react-ui';
-import { useEffect, useState } from 'react';
+import { ROUTE } from "@consts";
+import { Button } from "@mui/material";
+import { solanaService } from "@services";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export const MyWallet: React.FC = () => {
@@ -27,7 +24,6 @@ export const MyWallet: React.FC = () => {
     };
     asyncCall();
   }, [wallet]);
-
 
   return (
     <>

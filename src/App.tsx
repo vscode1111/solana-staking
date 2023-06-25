@@ -1,10 +1,7 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo } from "react";
 import "./App.css";
 import "./styles.css";
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from "@solana/wallet-adapter-react";
+import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
   LedgerWalletAdapter,
@@ -14,12 +11,12 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
+} from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
-import { StakeProvider } from '@context';
-import { MainRouter } from '@views';
-import { ThemeProvider } from '@mui/material';
-import { theme } from '@themes';
+import { StakeProvider } from "@context";
+import { MainRouter } from "@views";
+import { ThemeProvider } from "@mui/material";
+import { theme } from "@themes";
 
 export const App: FC = () => {
   const network = WalletAdapterNetwork.Mainnet;
@@ -34,11 +31,12 @@ export const App: FC = () => {
       new SlopeWalletAdapter(),
       new SolflareWalletAdapter({ network }),
       new TorusWalletAdapter(),
+      // new LedgerWalletAdapter({ derivationPath: Buffer.from("test") }),
       new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
     ],
-    [network]
+    [network],
   );
 
   return (

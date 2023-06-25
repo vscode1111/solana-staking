@@ -18,6 +18,7 @@ import {
 } from "@solana/web3.js";
 import { useStake } from "@context";
 import { useNavigate } from "react-router-dom";
+import { printSol } from "@utils";
 
 const SEPARATE_TX = true;
 
@@ -80,7 +81,9 @@ export function Validators() {
         }),
       );
 
-      const foundStakeAccountInfo = stakeAccountInfos.find((info) => info.validator === votePubkey && info.status.toLowerCase() === "activating");
+      const foundStakeAccountInfo = stakeAccountInfos.find(
+        (info) => info.validator === votePubkey && info.status.toLowerCase() === "activating",
+      );
       console.log(222, foundStakeAccountInfo?.stakeAccount);
 
       if (!SEPARATE_TX) {
@@ -138,7 +141,7 @@ export function Validators() {
           <>
             {validators.map((info) => (
               <Button key={uid(info)} onClick={() => handleClick(info.votePubkey)}>
-                {info.votePubkey} - {info.activatedStake?.toFixed(3)}
+                {info.votePubkey} - {printSol(info.activatedStake)}
               </Button>
             ))}
           </>
