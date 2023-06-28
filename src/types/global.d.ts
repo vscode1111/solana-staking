@@ -1,4 +1,5 @@
 import { Colors } from "@consts";
+import { stores, RootStore } from "@/stores";
 
 declare module "@mui/material/styles" {
   interface Theme {
@@ -7,5 +8,12 @@ declare module "@mui/material/styles" {
 
   interface ThemeOptions {
     colors: Colors;
+  }
+}
+
+declare global {
+  interface Window {
+    stores?: typeof stores;
+    BASE_URL?: string;
   }
 }

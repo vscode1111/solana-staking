@@ -1,11 +1,10 @@
-import React from "react";
 import { Button, Typography } from "@mui/material";
 import { useLedgerDrawerContentStyles } from "./useLedgerDrawerContentStyles";
-import { StakeAccount } from "@services";
+import { StakeAccount } from "@/services";
 import { useMemo, useCallback } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, StakeProgram, Transaction } from "@solana/web3.js";
-import { printSol } from "@utils";
+import { printSol } from "@/utils";
 
 interface DrawerContentProps {
   stakeAccount: StakeAccount;
@@ -16,8 +15,6 @@ export function LedgerDrawerContent({ stakeAccount, onClose }: DrawerContentProp
   const { classes } = useLedgerDrawerContentStyles();
   const { connection } = useConnection();
   const wallet = useWallet();
-
-  connection.select();
 
   const isDeactivateStake = useMemo(
     () => ["active", "activating"].includes(stakeAccount.status),

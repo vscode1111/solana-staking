@@ -1,10 +1,10 @@
 import { Button, Typography } from "@mui/material";
 import { useDrawerContentStyles } from "./useDrawerContentStyles";
-import { StakeAccount } from "@services";
+import { StakeAccount } from "@/services";
 import { useMemo, useCallback } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, StakeProgram, Transaction } from "@solana/web3.js";
-import { printSol } from "@utils";
+import { printSol } from "@/utils";
 
 interface DrawerContentProps {
   stakeAccount: StakeAccount;

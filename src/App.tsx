@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import "./App.css";
 import "./styles.css";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
@@ -13,13 +13,14 @@ import {
   TorusWalletAdapter,
   getDerivationPath,
 } from "@solana/wallet-adapter-wallets";
-// import { LedgerWalletAdapter, getDerivationPath } from '@solana/wallet-adapter-ledger'
 import { clusterApiUrl } from "@solana/web3.js";
-import { StakeProvider } from "@context";
-import { MainRouter } from "@views";
+import { StakeProvider } from "@/context";
+import { MainRouter } from "@/views";
 import { Button, ThemeProvider } from "@mui/material";
-import { theme } from "@themes";
-import { LedgerHDWalletPath, LedgerWalletAdapter2, getLedgerPathList } from "@utils";
+import { theme } from "@/themes";
+import { LedgerWalletAdapter2, getLedgerPathList } from "@/utils";
+import { stores } from "@/stores";
+import { StoreContext } from "./hooks";
 
 export const App: FC = () => {
   const network = WalletAdapterNetwork.Mainnet;
@@ -62,19 +63,25 @@ export const App: FC = () => {
   return (
     <div className="top-wrapper">
       <div className="App">
-        <ThemeProvider theme={theme}>
-          <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets}>
-              <StakeProvider>
-                <Button onClick={async () => {
-                  const ledger = new LedgerWalletAdapter2();
-                  await ledger.connect();
-                }}>Connect</Button>
-                <MainRouter />
-              </StakeProvider>
-            </WalletProvider>
-          </ConnectionProvider>
-        </ThemeProvider>
+        <StoreContext.Provider value={stores}>
+          <ThemeProvider theme={theme}>
+            <ConnectionProvider endpoint={endpoint}>
+              <WalletProvider wallets={wallets}>
+                <StakeProvider>
+                  <Button
+                    onClick={async () => {
+                      const ledger = new LedgerWalletAdapter2();
+                      await ledger.connect();
+                    }}
+                  >
+                    Connect
+                  </Button>
+                  <MainRouter />
+                </StakeProvider>
+              </WalletProvider>
+            </ConnectionProvider>
+          </ThemeProvider>
+        </StoreContext.Provider>
       </div>
     </div>
   );

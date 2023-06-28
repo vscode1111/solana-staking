@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { COLORS, TRANSITION } from "@consts";
+import { COLORS, TRANSITION } from "@/consts";
 import { globalStyles } from "./globalStyles";
 
 const baseTheme = createTheme({

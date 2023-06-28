@@ -1,6 +1,6 @@
-import { ROUTE } from "@consts";
+import { ROUTE } from "@/consts";
 import { Button } from "@mui/material";
-import { solanaService } from "@services";
+import { solanaService } from "@/services";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useEffect, useState } from "react";

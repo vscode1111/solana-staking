@@ -11,7 +11,7 @@ import {
 } from "@solana/web3.js";
 import { InflationRewardNull, ParsedAccountInfo, RewardNull, StakeAccount } from "./types";
 import { mapAccountFn, mapRewardFn, mapValidatorFn } from "./utils";
-import { printJson, sleep } from "@utils";
+import { printJson, sleep } from "@/utils";
 
 export class Solana {
   private connection: Connection;

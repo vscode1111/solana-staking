@@ -1,5 +1,5 @@
-import { ROUTE } from "@consts";
-import { Home, StakeAccounts, Validators } from "@views";
+import { ROUTE } from "@/consts";
+import { Home, StakeAccounts, Validators } from "@/views";
 import { Route, Routes } from "react-router-dom";
 
 export function MainRouter() {

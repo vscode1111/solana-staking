@@ -1,42 +1,33 @@
 {
   "compilerOptions": {
-    "target": "es2019",
-    "module": "esnext",
-    "outDir": "lib/esm",
-    "declarationDir": "lib/types",
-    "noEmit": false,
-    "declaration": true,
-    "sourceMap": true,
-    "noEmitOnError": true,
-    "stripInternal": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
     "moduleResolution": "node",
-    "jsx": "react",
-    "strict": true,
-    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "typeRoots": ["node_modules/@types"],
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Misc */
+    "sourceMap": true,
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
 
     /* Paths */
     "paths": {
-      "@components": ["./src/components"],
-      "@components/*": ["./src/components/*"],
-      "@consts": ["./src/consts"],
-      "@consts/*": ["./src/consts/*"],
-      "@context": ["./src/context"],
-      "@context/*": ["./src/context/*"],
-      "@hooks": ["./src/hooks"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@services": ["./src/services"],
-      "@services/*": ["./src/services/*"],
-      "@themes": ["./src/themes"],
-      "@themes/*": ["./src/themes/*"],
-      "@types": ["./src/types"],
-      "@types/*": ["./src/types/*"],
-      "@utils": ["./src/utils"],
-      "@utils/*": ["./src/utils/*"],
-      "@views": ["./src/views"],
-      "@views/*": ["./src/views/*"]
+      "@/*": ["./src/*"]
     },
   },
   "include": ["src"]

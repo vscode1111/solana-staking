@@ -2,13 +2,13 @@ import { Button, Drawer } from "@mui/material";
 import { useStakeAccountsStyles } from "./useStakeAccountsStyles";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { StakeAccount, solanaService } from "@services";
+import { StakeAccount, solanaService } from "@/services";
 import { uid } from "react-uid";
-import { Loader } from "@components";
-import { ROUTE } from "@consts";
+import { Loader } from "@/components";
+import { ROUTE } from "@/consts";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { printJson, printSol } from "@utils";
-import { useStake } from "@context";
+import { printJson, printSol } from "@/utils";
+import { useStake } from "@/context";
 import { DrawerContent } from "./components";
 
 export function StakeAccounts() {

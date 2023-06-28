@@ -18,14 +18,15 @@ export interface LedgerHDWalletAccount extends LedgerHDWalletPath {
   key: PublicKey;
 }
 
-export class LedgerWalletAdapter2 extends EventEmitter implements WalletAdapter {
+//export class LedgerWalletAdapter extends EventEmitter implements WalletAdapter {
+export class LedgerWalletAdapter2 implements WalletAdapter {
   _connecting: boolean;
   _publicKey: PublicKey | null;
   _transport: Transport | null;
   _derivationPath: Buffer;
 
   constructor() {
-    super();
+    // super();
     this._connecting = false;
     this._publicKey = null;
     this._transport = null;
@@ -95,7 +96,7 @@ export class LedgerWalletAdapter2 extends EventEmitter implements WalletAdapter 
         console.log(333, this._derivationPath);
       }
       this._publicKey = await getPublicKey(this._transport, this._derivationPath);
-      this.emit("connect", this._publicKey);
+      // "connect", this._publicKey);
     } catch (error) {
       await this.disconnect();
       this._connecting = false;
@@ -117,13 +118,11 @@ export class LedgerWalletAdapter2 extends EventEmitter implements WalletAdapter 
     this._publicKey = null;
 
     if (emit) {
-      this.emit("disconnect");
+      // this.emit("disconnect");
     }
   }
 
-  async fetchAccountsForPaths(
-    paths: LedgerHDWalletPath[],
-  ): Promise<LedgerHDWalletAccount[]> {
+  async fetchAccountsForPaths(paths: LedgerHDWalletPath[]): Promise<LedgerHDWalletAccount[]> {
     if (!this._transport) {
       return [];
     }

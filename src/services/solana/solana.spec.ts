@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { expect } from "chai";
 import { Solana } from "./solana";
-import { printJson } from "@utils";
+import { printJson } from "@/utils";
 
 describe("@solana/web3.js", () => {
   const solana = new Solana();

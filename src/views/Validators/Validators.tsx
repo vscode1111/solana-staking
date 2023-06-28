@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useValidatorsStyles } from "./useValidatorsStyles";
-import { ROUTE } from "@consts";
+import { ROUTE } from "@/consts";
 import { Button } from "@mui/material";
-import { ValidatorInfo, solanaService } from "@services";
+import { ValidatorInfo, solanaService } from "@/services";
 import { useEffect, useState } from "react";
-import { Loader } from "@components";
+import { Loader } from "@/components";
 import { uid } from "react-uid";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
@@ -16,9 +16,9 @@ import {
   StakeProgram,
   Transaction,
 } from "@solana/web3.js";
-import { useStake } from "@context";
+import { useStake } from "@/context";
 import { useNavigate } from "react-router-dom";
-import { printSol } from "@utils";
+import { printSol } from "@/utils";
 
 const SEPARATE_TX = true;
 
