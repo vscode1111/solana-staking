@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useEffect, useMemo } from "react";
 import "./App.css";
 import "./styles.css";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
@@ -11,33 +11,53 @@ import {
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
   TorusWalletAdapter,
+  getDerivationPath,
 } from "@solana/wallet-adapter-wallets";
+// import { LedgerWalletAdapter, getDerivationPath } from '@solana/wallet-adapter-ledger'
 import { clusterApiUrl } from "@solana/web3.js";
 import { StakeProvider } from "@context";
 import { MainRouter } from "@views";
-import { ThemeProvider } from "@mui/material";
+import { Button, ThemeProvider } from "@mui/material";
 import { theme } from "@themes";
+import { LedgerHDWalletPath, LedgerWalletAdapter2, getLedgerPathList } from "@utils";
 
 export const App: FC = () => {
   const network = WalletAdapterNetwork.Mainnet;
 
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
+  console.log(111, getDerivationPath(0, 0).toString("utf-8"));
+
   // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking --
   // Only the wallets you configure here will be compiled into your application
-  const wallets = React.useMemo(
+  const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
       new SlopeWalletAdapter(),
       new SolflareWalletAdapter({ network }),
       new TorusWalletAdapter(),
-      // new LedgerWalletAdapter({ derivationPath: Buffer.from("test") }),
-      new LedgerWalletAdapter(),
+      new LedgerWalletAdapter({ derivationPath: getDerivationPath(0, 0) }),
+      // new LedgerWalletAdapter({ derivationPath: Buffer.from("m/44'/501'/0'/0'") }),
+      // new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
     ],
     [network],
   );
+
+  useEffect(() => {
+    const call = async () => {
+      const ledger = new LedgerWalletAdapter2();
+      await ledger.connect();
+
+      const paths = getLedgerPathList();
+
+      const accounts = await ledger.fetchAccountsForPaths(paths);
+      console.log(777, accounts);
+    };
+
+    call();
+  }, []);
 
   return (
     <div className="top-wrapper">
@@ -46,6 +66,10 @@ export const App: FC = () => {
           <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets}>
               <StakeProvider>
+                <Button onClick={async () => {
+                  const ledger = new LedgerWalletAdapter2();
+                  await ledger.connect();
+                }}>Connect</Button>
                 <MainRouter />
               </StakeProvider>
             </WalletProvider>

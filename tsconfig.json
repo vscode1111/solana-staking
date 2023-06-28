@@ -1,27 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "target": "es2019",
+    "module": "esnext",
+    "outDir": "lib/esm",
+    "declarationDir": "lib/types",
+    "noEmit": false,
+    "declaration": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "stripInternal": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    /* Misc */
-    "sourceMap": true,
-    "outDir": "./dist",
+    "typeRoots": ["node_modules/@types"],
 
     /* Paths */
     "paths": {
@@ -29,6 +23,8 @@
       "@components/*": ["./src/components/*"],
       "@consts": ["./src/consts"],
       "@consts/*": ["./src/consts/*"],
+      "@context": ["./src/context"],
+      "@context/*": ["./src/context/*"],
       "@hooks": ["./src/hooks"],
       "@hooks/*": ["./src/hooks/*"],
       "@services": ["./src/services"],
