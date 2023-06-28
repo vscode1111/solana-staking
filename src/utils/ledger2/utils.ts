@@ -1,4 +1,4 @@
-import { LedgerHDWalletPath } from "./ledger";
+import { LedgerHDWalletPath } from "./ledger2";
 
 export function getLedgerPathList(): LedgerHDWalletPath[] {
   const result = [{}];

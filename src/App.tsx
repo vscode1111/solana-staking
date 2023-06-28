@@ -18,7 +18,7 @@ import { StakeProvider } from "@/context";
 import { MainRouter } from "@/views";
 import { Button, ThemeProvider } from "@mui/material";
 import { theme } from "@/themes";
-import { LedgerWalletAdapter2, getLedgerPathList } from "@/utils";
+import { LedgerWalletAdapter1, LedgerWalletAdapter2, getLedgerPathList } from "@/utils";
 import { stores } from "@/stores";
 import { StoreContext } from "./hooks";
 
@@ -37,8 +37,12 @@ export const App: FC = () => {
       new SlopeWalletAdapter(),
       new SolflareWalletAdapter({ network }),
       new TorusWalletAdapter(),
-      new LedgerWalletAdapter({ derivationPath: getDerivationPath(0, 0) }),
-      // new LedgerWalletAdapter({ derivationPath: Buffer.from("m/44'/501'/0'/0'") }),
+      // new LedgerWalletAdapter({ derivationPath: getDerivationPath(0, 0) }),
+      new LedgerWalletAdapter1({
+        onConnecting: async () => {
+          console.log(999, "LedgerWalletAdapter1");
+        },
+      }),
       // new LedgerWalletAdapter(),
       new SolletWalletAdapter({ network }),
       new SolletExtensionWalletAdapter({ network }),
@@ -48,13 +52,11 @@ export const App: FC = () => {
 
   useEffect(() => {
     const call = async () => {
-      const ledger = new LedgerWalletAdapter2();
-      await ledger.connect();
-
-      const paths = getLedgerPathList();
-
-      const accounts = await ledger.fetchAccountsForPaths(paths);
-      console.log(777, accounts);
+      // const ledger = new LedgerWalletAdapter2();
+      // await ledger.connect();
+      // const paths = getLedgerPathList();
+      // const accounts = await ledger.fetchAccountsForPaths(paths);
+      // console.log(777, accounts);
     };
 
     call();
