@@ -1,16 +1,5 @@
-
-.align-button-top-right {
-  position: absolute;
-  top: 100px;
-  right: 100px;
-  align-items: flex-start;
-  padding: 5px;
-}
 .wallet-adapter-button-trigger{
-  padding: 0 !important;
-  background-color: white !important;
-  color: black !important;
-  padding: 10px !important;
-  margin: 0px 24px !important;
+  margin-top: 50px;
+  margin-bottom: 20px;
   z-index: 1;
 }

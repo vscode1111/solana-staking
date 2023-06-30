@@ -10,7 +10,11 @@ export const useLedgerDialogStyles = makeStyles()(() => ({
     flexDirection: "column",
     gap: 20,
   },
+  back: {
+    width: "100%",
+  },
   button: {
+    justifyContent: "space-between",
     width: "100%",
   },
 }));

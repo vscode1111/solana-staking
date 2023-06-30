@@ -5,7 +5,7 @@ import type { Transaction, VersionedTransaction } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
 import { LedgerHDWalletPath } from "./types";
 
-const ACCOUNT_COUNT = 1;
+const ACCOUNT_COUNT = 5;
 
 export function getDerivationPath(account?: number, change?: number): Buffer {
   const length = account !== undefined ? (change === undefined ? 3 : 4) : 2;

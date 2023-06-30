@@ -46,7 +46,6 @@ export class Solana {
     const programAccounts = await this.connection.getParsedProgramAccounts(programId, {
       filters: [{ memcmp: { offset: 44, bytes: userAccountPublicKey.toBase58() } }],
     });
-    console.log(111, printJson(programAccounts[0]));
     const result: StakeAccount[] = [];
     await Promise.all(
       programAccounts.map(async (account) => {

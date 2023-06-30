@@ -18,7 +18,7 @@ import {
 } from "@solana/web3.js";
 import { useStake } from "@/context";
 import { useNavigate } from "react-router-dom";
-import { printSol } from "@/utils";
+import { printValue } from "@/utils";
 import { useInitEffect } from "@/hooks";
 
 const SEPARATE_TX = true;
@@ -142,7 +142,7 @@ export function Validators() {
           <>
             {validators.map((info) => (
               <Button key={uid(info)} onClick={() => handleClick(info.votePubkey)}>
-                {info.votePubkey} - {printSol(info.activatedStake)}
+                {info.votePubkey} - {printValue(info.activatedStake)}
               </Button>
             ))}
           </>

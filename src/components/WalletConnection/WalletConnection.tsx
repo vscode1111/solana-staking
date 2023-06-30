@@ -1,3 +1,4 @@
+import "./WalletConnection.css";
 import { ROUTE } from "@/consts";
 import { Button } from "@mui/material";
 import { solanaService } from "@/services";

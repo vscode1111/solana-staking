@@ -4,7 +4,7 @@ import { StakeAccount } from "@/services";
 import { useMemo, useCallback } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, StakeProgram, Transaction } from "@solana/web3.js";
-import { printSol } from "@/utils";
+import { printValue } from "@/utils";
 
 interface DrawerContentProps {
   stakeAccount: StakeAccount;
@@ -66,7 +66,7 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
       <div className={classes.content}>
         <Typography variant="h6">Status: {stakeAccount.status}</Typography>
         <Typography variant="h6">Address: {stakeAccount.stakeAccount}</Typography>
-        <Typography variant="h6">Balance: {printSol(stakeAccount.lamports)} SOL</Typography>
+        <Typography variant="h6">Balance: {printValue(stakeAccount.lamports)} SOL</Typography>
       </div>
       <div className={classes.navigation}>
         <Button onClick={onClose}>Back</Button>

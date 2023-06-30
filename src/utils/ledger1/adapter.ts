@@ -96,6 +96,10 @@ export class LedgerWalletAdapter1 extends BaseSignerWalletAdapter {
         this._transport = transport;
         if (this._onConnecting) {
           onConnectingAccount = await this._onConnecting(this);
+          this._derivationPath = getDerivationPath(
+            onConnectingAccount.account,
+            onConnectingAccount.change,
+          );
           if (!onConnectingAccount) {
             throw new Error("No external account during connection interruption");
           }
@@ -106,9 +110,19 @@ export class LedgerWalletAdapter1 extends BaseSignerWalletAdapter {
 
       let publicKey: PublicKey;
       try {
+        // const publicKey = await getPublicKey(transport, this._derivationPath);
+
         publicKey = onConnectingAccount
           ? onConnectingAccount.publicKey
           : await getPublicKey(transport, this._derivationPath);
+
+        // publicKey = await getPublicKey(
+        //   transport,
+        //   // onConnectingAccount
+        //   //   ? getDerivationPath(onConnectingAccount.account, onConnectingAccount.change)
+        //   //   : this._derivationPath,
+        //   getDerivationPath(0, undefined),
+        // );
       } catch (error: any) {
         throw new WalletPublicKeyError(error?.message, error);
       }

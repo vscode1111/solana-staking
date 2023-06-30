@@ -9,6 +9,10 @@ export const useDerivationPathButtonStyles = makeStyles()(() => ({
       height: 80,
     },
   },
+  loader: {
+    position: "absolute",
+    left: "calc(50% - 20px)",
+  },
   panel: {
     display: "flex",
     flexDirection: "column",

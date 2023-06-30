@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, toJS } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import { RootStore } from "./RootStore";
 import { BaseStore, baseStoreProps } from "./BaseStore";
 import { LedgerHDWalletAccount, LedgerWalletAdapter1, getLedgerPathList } from "@/utils";
@@ -30,13 +30,13 @@ export class LedgerStore extends BaseStore {
       accounts1: observable,
       accounts2: observable,
       fetchStatus: observable,
+      fetchStatus0: observable,
+      fetchStatus1: observable,
+      fetchStatus2: observable,
       fetchError: observable,
       init: action,
       setSelectedAccount: action,
       selectedAccount: computed,
-      fetchBalance0: action,
-      fetchBalance1: action,
-      fetchBalance2: action,
     });
   }
 
@@ -45,6 +45,24 @@ export class LedgerStore extends BaseStore {
   }
 
   async init() {
+    await this.fetchAddresses();
+
+    this.accounts0 = this.accounts?.filter(
+      (account) => account.account === undefined && account.change === undefined,
+    );
+    this.accounts1 = this.accounts?.filter(
+      (account) => account.account !== undefined && account.change === undefined,
+    );
+    this.accounts2 = this.accounts?.filter(
+      (account) => account.account !== undefined && account.change !== undefined,
+    );
+
+    await this.fetchBalance0();
+    await this.fetchBalance1();
+    await this.fetchBalance2();
+  }
+
+  public async fetchAddresses() {
     await this.statusHandler(
       async () => {
         if (!this._adapter) {
@@ -57,65 +75,46 @@ export class LedgerStore extends BaseStore {
       "fetchStatus",
       "fetchError",
     );
-
-    this.accounts0 = this.accounts?.filter(
-      (account) => account.account === undefined && account.change === undefined,
-    );
-    this.accounts1 = this.accounts?.filter(
-      (account) => account.account !== undefined && account.change === undefined,
-    );
-    this.accounts2 = this.accounts?.filter(
-      (account) => account.account !== undefined && account.change !== undefined,
-    );
   }
 
-  private async fetchBalance(accounts: LedgerHDWalletAccount[] | undefined, statusField?: keyof this) {
-    await this.statusHandler(
-      async () => {
-        console.log(200, toJS(accounts));
+  private async fetchBalance(
+    accounts: LedgerHDWalletAccount[] | undefined,
+    statusField?: keyof this,
+  ) {
+    await this.statusHandler(async () => {
+      if (!this._adapter || !accounts) {
+        return;
+      }
 
-        if (!this._adapter || !accounts) {
-          return;
-        }
+      const publicKeys = accounts?.map((account) => account.publicKey);
 
-        const publicKeys = accounts?.map(account => account.publicKey);
+      if (!publicKeys) {
+        return;
+      }
 
-        console.log(210, publicKeys[0].toBase58());
+      const balances = await solanaService.getMultipleAccountInfo(publicKeys);
+      // const balances = [559611719].map((item) => ({ lamports: item }));
+      // await sleep(1000);
 
-        if (!publicKeys) {
-          return;
-        }
+      if (!accounts) {
+        return;
+      }
 
-        console.log(210, publicKeys[0].toBase58());
-
-        const balances = await solanaService.getMultipleAccountInfo(publicKeys);
-
-        console.log(222, balances);
-
-        if (!accounts) {
-          return;
-        }
-
-
-        for (let i = 0; i < accounts?.length; i++ ) {
-          accounts[i].balance = balances[i]?.lamports; 
-        }
-
-        console.log(225, toJS(accounts));
-      },
-      statusField,
-    );
+      for (let i = 0; i < accounts?.length; i++) {
+        accounts[i].balance = balances[i]?.lamports;
+      }
+    }, statusField);
   }
 
-  public async fetchBalance0() {
+  private async fetchBalance0() {
     await this.fetchBalance(this.accounts0, "fetchStatus0");
   }
 
-  public async fetchBalance1() {
+  private async fetchBalance1() {
     await this.fetchBalance(this.accounts1, "fetchStatus1");
   }
 
-  public async fetchBalance2() {
+  private async fetchBalance2() {
     await this.fetchBalance(this.accounts2, "fetchStatus2");
   }
 

@@ -38,9 +38,7 @@ describe("@solana/web3.js", () => {
     //   new PublicKey("2BDWGp99mPJmHtGjrJ2c4HfEruy9idAxEwYa2VLyYoWP"),
     //   new PublicKey("BSHcqEiPpaczXz8yMzrogDWLkYNe2uFQopUzTQUveMQz"),
     // ];
-    const publicKeys = [
-      new PublicKey("ErCGf6KPxET2yvNsKwTQNFCigzfY7WXkDEE1fLAnJk5x"),
-    ];
+    const publicKeys = [new PublicKey("ErCGf6KPxET2yvNsKwTQNFCigzfY7WXkDEE1fLAnJk5x")];
 
     const multipleAccountInfo = await solana.getMultipleAccountInfo(publicKeys);
     expect(multipleAccountInfo).not.undefined;

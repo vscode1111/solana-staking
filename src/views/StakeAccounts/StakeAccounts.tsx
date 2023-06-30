@@ -7,7 +7,7 @@ import { uid } from "react-uid";
 import { Loader } from "@/components";
 import { ROUTE } from "@/consts";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { printJson, printSol } from "@/utils";
+import { printJson, printValue } from "@/utils";
 import { useStake } from "@/context";
 import { DrawerContent } from "./components";
 import { useInitEffect } from "@/hooks";
@@ -59,8 +59,8 @@ export function StakeAccounts() {
           <>
             {stakeAccountInfos.map((info) => (
               <Button key={uid(info)} onClick={() => setStakeAccount(info)}>
-                {info.stakeAccount} - {info.status} - {printSol(info.activeStake)} -{" "}
-                {printSol(info.lamports)}
+                {info.stakeAccount} - {info.status} - {printValue(info.activeStake)} -{" "}
+                {printValue(info.lamports)}
               </Button>
             ))}
             <Drawer anchor="bottom" open={!!stakeAccount} onClose={() => setStakeAccount(null)}>
