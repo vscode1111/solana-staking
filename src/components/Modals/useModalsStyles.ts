@@ -17,4 +17,7 @@ export const useModalsStyles = makeStyles()((theme) => ({
     justifyContent: "space-between",
     marginBottom: 20,
   },
+  close: {
+    backgroundColor: theme.colors.red,
+  },
 }));

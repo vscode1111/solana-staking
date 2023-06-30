@@ -5,6 +5,7 @@ export const useStakeAccountsStyles = makeStyles()(() => ({
     display: "flex",
     flexDirection: "column",
     width: "100vw",
+    padding: 20,
   },
   navigation: {
     display: "flex",

@@ -52,9 +52,10 @@ export const LedgerDialog = observer(() => {
                     modals.closeModal();
                   }}
                 >
-                  <Typography>{`${account.publicKey.toBase58()} - ${account.account}/${
+                  {/* <Typography>{`${account.publicKey.toBase58()} - ${account.account}/${
                     account.change
-                  }`}</Typography>
+                  }`}</Typography> */}
+                  <Typography>{`${account.publicKey.toBase58()}`}</Typography>
                   <Typography>{printSol(account.balance)}</Typography>
                 </Button>
               ))}
