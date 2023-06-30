@@ -33,7 +33,21 @@ describe("@solana/web3.js", () => {
     console.log(printJson(stakeAccountInfo));
   });
 
-  it.only("getStakeAccountInfos", async () => {
+  it.only("getMultipleAccountInfo", async () => {
+    // const publicKeys = [
+    //   new PublicKey("2BDWGp99mPJmHtGjrJ2c4HfEruy9idAxEwYa2VLyYoWP"),
+    //   new PublicKey("BSHcqEiPpaczXz8yMzrogDWLkYNe2uFQopUzTQUveMQz"),
+    // ];
+    const publicKeys = [
+      new PublicKey("ErCGf6KPxET2yvNsKwTQNFCigzfY7WXkDEE1fLAnJk5x"),
+    ];
+
+    const multipleAccountInfo = await solana.getMultipleAccountInfo(publicKeys);
+    expect(multipleAccountInfo).not.undefined;
+    console.log(printJson(multipleAccountInfo));
+  });
+
+  it("getStakeAccountInfos", async () => {
     const stakeAccountInfos = await solana.getStakeAccountInfos(userAccountPublicKey);
     expect(stakeAccountInfos.length).greaterThanOrEqual(0);
     console.log(printJson(stakeAccountInfos));

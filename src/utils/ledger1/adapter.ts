@@ -1,3 +1,4 @@
+// @ts-nocheck
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import type { default as Transport } from "@ledgerhq/hw-transport";
 import type { WalletName } from "@solana/wallet-adapter-base";
@@ -18,8 +19,7 @@ import type {
   TransactionVersion,
   VersionedTransaction,
 } from "@solana/web3.js";
-import "./polyfills/index.js";
-import { getDerivationPath, getPublicKey, signTransaction } from "./util";
+import { getDerivationPath, getPublicKey, signTransaction } from "./utils";
 import { LedgerHDWalletAccount, LedgerHDWalletPath } from "./types";
 
 type OnConnectingFn = (adapter: LedgerWalletAdapter1) => Promise<LedgerHDWalletAccount | undefined>;

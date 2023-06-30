@@ -3,7 +3,9 @@ import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { isVersionedTransaction } from "@solana/wallet-adapter-base";
 import type { Transaction, VersionedTransaction } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
-import "./polyfills/index.js";
+import { LedgerHDWalletPath } from "./types";
+
+const ACCOUNT_COUNT = 1;
 
 export function getDerivationPath(account?: number, change?: number): Buffer {
   const length = account !== undefined ? (change === undefined ? 3 : 4) : 2;
@@ -93,4 +95,17 @@ async function send(
   const response = await transport.send(LEDGER_CLA, instruction, p1, p2, buffer);
 
   return response.slice(0, response.length - 2);
+}
+
+export function getLedgerPathList(): LedgerHDWalletPath[] {
+  const result = [{}];
+
+  for (let i = 0; i < ACCOUNT_COUNT; i++) {
+    result.push({ account: i });
+  }
+  for (let i = 0; i < ACCOUNT_COUNT; i++) {
+    result.push({ account: 0, change: i });
+  }
+
+  return result;
 }

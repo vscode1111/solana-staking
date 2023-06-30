@@ -1,4 +1,5 @@
 import {
+  AccountInfo,
   Authorized,
   Connection,
   Keypair,
@@ -23,7 +24,13 @@ export class Solana {
   public async getAccountInfo(userAccountPublicKey: PublicKey): Promise<ParsedAccountInfo> {
     const accountInfo = await this.connection.getParsedAccountInfo(userAccountPublicKey);
     return (accountInfo.value?.data as ParsedAccountData).parsed as ParsedAccountInfo;
-    // return (accountInfo.value?.data as ParsedAccountData);
+  }
+
+  public async getMultipleAccountInfo(
+    publicKeys: PublicKey[],
+  ): Promise<(AccountInfo<Buffer | ParsedAccountData> | null)[]> {
+    const accountInfo = await this.connection.getMultipleAccountsInfo(publicKeys);
+    return accountInfo;
   }
 
   public async getStakeAccounts(userAccountPublicKey: PublicKey) {
@@ -39,13 +46,6 @@ export class Solana {
     const programAccounts = await this.connection.getParsedProgramAccounts(programId, {
       filters: [{ memcmp: { offset: 44, bytes: userAccountPublicKey.toBase58() } }],
     });
-    // const stakeAccountPublicKeys = programAccounts.map((account) => new PublicKey(account.pubkey));
-    // const stakeAccountPublicKeys2 = programAccounts.map((account) => (
-    //   {
-    //     pubkey: new PublicKey(account.pubkey),
-    //     lamports: (account as any).lamports,
-    //   })
-    //   );
     console.log(111, printJson(programAccounts[0]));
     const result: StakeAccount[] = [];
     await Promise.all(
