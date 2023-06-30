@@ -1,13 +1,11 @@
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import type { default as Transport } from "@ledgerhq/hw-transport";
-import type { default as TransportWebHID } from "@ledgerhq/hw-transport-webhid";
 import type { WalletName } from "@solana/wallet-adapter-base";
 import {
   BaseSignerWalletAdapter,
   WalletConnectionError,
   WalletDisconnectedError,
   WalletDisconnectionError,
-  WalletLoadError,
   WalletNotConnectedError,
   WalletNotReadyError,
   WalletPublicKeyError,
@@ -21,9 +19,10 @@ import type {
   VersionedTransaction,
 } from "@solana/web3.js";
 import "./polyfills/index.js";
-import { getDerivationPath, getPublicKey, signTransaction } from "./util.js";
+import { getDerivationPath, getPublicKey, signTransaction } from "./util";
+import { LedgerHDWalletAccount, LedgerHDWalletPath } from "./types";
 
-type OnConnectingFn = () => Promise<void>;
+type OnConnectingFn = (adapter: LedgerWalletAdapter1) => Promise<LedgerHDWalletAccount | undefined>;
 
 export interface LedgerWalletAdapterConfig {
   derivationPath?: Buffer;
@@ -81,6 +80,7 @@ export class LedgerWalletAdapter1 extends BaseSignerWalletAdapter {
 
       this._connecting = true;
 
+      // It doesn't work
       // let TransportWebHIDClass: typeof TransportWebHID;
       // try {
       //     TransportWebHIDClass = (await import('@ledgerhq/hw-transport-webhid')).default;
@@ -89,11 +89,16 @@ export class LedgerWalletAdapter1 extends BaseSignerWalletAdapter {
       // }
 
       let transport: Transport;
+      let onConnectingAccount: LedgerHDWalletAccount | undefined;
       try {
         // transport = await TransportWebHIDClass.create();
         transport = await TransportWebUSB.create();
+        this._transport = transport;
         if (this._onConnecting) {
-          await this._onConnecting();
+          onConnectingAccount = await this._onConnecting(this);
+          if (!onConnectingAccount) {
+            throw new Error("No external account during connection interruption");
+          }
         }
       } catch (error: any) {
         throw new WalletConnectionError(error?.message, error);
@@ -101,14 +106,15 @@ export class LedgerWalletAdapter1 extends BaseSignerWalletAdapter {
 
       let publicKey: PublicKey;
       try {
-        publicKey = await getPublicKey(transport, this._derivationPath);
+        publicKey = onConnectingAccount
+          ? onConnectingAccount.publicKey
+          : await getPublicKey(transport, this._derivationPath);
       } catch (error: any) {
         throw new WalletPublicKeyError(error?.message, error);
       }
 
       transport.on("disconnect", this._disconnected);
 
-      this._transport = transport;
       this._publicKey = publicKey;
 
       this.emit("connect", publicKey);
@@ -170,4 +176,27 @@ export class LedgerWalletAdapter1 extends BaseSignerWalletAdapter {
       this.emit("disconnect");
     }
   };
+
+  async fetchAccountsForPaths(paths: LedgerHDWalletPath[]): Promise<LedgerHDWalletAccount[]> {
+    if (!this._transport) {
+      return [];
+    }
+
+    try {
+      const result: LedgerHDWalletAccount[] = [];
+      for (const path of paths) {
+        const derivationPath = getDerivationPath(path.account, path.change);
+        const publicKey = await getPublicKey(this._transport, derivationPath);
+        result.push({
+          ...path,
+          publicKey,
+        });
+      }
+      return result;
+    } catch (error) {
+      throw new Error(error?.message);
+    } finally {
+      // await this._transport?.close();
+    }
+  }
 }

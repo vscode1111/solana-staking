@@ -1,31 +1,29 @@
-import { FC, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import "./App.css";
 import "./styles.css";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
-  LedgerWalletAdapter,
   PhantomWalletAdapter,
-  SlopeWalletAdapter,
   SolflareWalletAdapter,
-  SolletExtensionWalletAdapter,
-  SolletWalletAdapter,
-  TorusWalletAdapter,
   getDerivationPath,
 } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
 import { StakeProvider } from "@/context";
 import { MainRouter } from "@/views";
-import { Button, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import { theme } from "@/themes";
-import { LedgerWalletAdapter1, LedgerWalletAdapter2, getLedgerPathList } from "@/utils";
-import { stores } from "@/stores";
-import { StoreContext } from "./hooks";
+import { LedgerWalletAdapter1 } from "@/utils";
+import { LedgerDialog, Modals } from "./components";
+import { observer } from "mobx-react";
+import { useStores } from "./hooks";
 
-export const App: FC = () => {
+export const App = observer(() => {
   const network = WalletAdapterNetwork.Mainnet;
 
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  const { ledger, modals } = useStores();
 
   console.log(111, getDerivationPath(0, 0).toString("utf-8"));
 
@@ -34,20 +32,24 @@ export const App: FC = () => {
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
-      new SlopeWalletAdapter(),
       new SolflareWalletAdapter({ network }),
-      new TorusWalletAdapter(),
       // new LedgerWalletAdapter({ derivationPath: getDerivationPath(0, 0) }),
       new LedgerWalletAdapter1({
-        onConnecting: async () => {
-          console.log(999, "LedgerWalletAdapter1");
+        onConnecting: async (adapter) => {
+          ledger.setAdapter(adapter);
+          await new Promise((res) => {
+            modals.openModal(
+              () => <LedgerDialog />,
+              () => res(0),
+            );
+          });
+
+          return ledger.selectedAccount;
         },
       }),
       // new LedgerWalletAdapter(),
-      new SolletWalletAdapter({ network }),
-      new SolletExtensionWalletAdapter({ network }),
     ],
-    [network],
+    [network, ledger, modals],
   );
 
   useEffect(() => {
@@ -65,26 +67,17 @@ export const App: FC = () => {
   return (
     <div className="top-wrapper">
       <div className="App">
-        <StoreContext.Provider value={stores}>
-          <ThemeProvider theme={theme}>
-            <ConnectionProvider endpoint={endpoint}>
-              <WalletProvider wallets={wallets}>
-                <StakeProvider>
-                  <Button
-                    onClick={async () => {
-                      const ledger = new LedgerWalletAdapter2();
-                      await ledger.connect();
-                    }}
-                  >
-                    Connect
-                  </Button>
-                  <MainRouter />
-                </StakeProvider>
-              </WalletProvider>
-            </ConnectionProvider>
-          </ThemeProvider>
-        </StoreContext.Provider>
+        <ThemeProvider theme={theme}>
+          <ConnectionProvider endpoint={endpoint}>
+            <WalletProvider wallets={wallets}>
+              <StakeProvider>
+                <MainRouter />
+                <Modals />
+              </StakeProvider>
+            </WalletProvider>
+          </ConnectionProvider>
+        </ThemeProvider>
       </div>
     </div>
   );
-};
+});

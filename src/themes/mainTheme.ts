@@ -97,7 +97,7 @@ export const theme = createTheme(baseTheme, {
           width: 200,
           fontSize: 12,
           fontWeight: 600,
-          backgroundColor: COLORS.red,
+          backgroundColor: COLORS.gray1,
           color: COLORS.white,
           textTransform: "initial",
           transition: TRANSITION,
@@ -108,7 +108,7 @@ export const theme = createTheme(baseTheme, {
             marginTop: 3,
           },
           "&:hover": {
-            // backgroundColor: COLORS.white,
+            backgroundColor: COLORS.gray1,
             borderColor: COLORS.violet,
           },
           "&:disabled": {
@@ -119,7 +119,6 @@ export const theme = createTheme(baseTheme, {
         },
 
         text: {
-          backgroundColor: "transparent",
           width: "fit-content",
           borderBottom: `1px solid ${COLORS.black}`,
           "&&": {
@@ -131,7 +130,6 @@ export const theme = createTheme(baseTheme, {
         },
 
         outlined: {
-          backgroundColor: "transparent",
           color: COLORS.black,
           borderBottom: `1px solid ${COLORS.black}`,
           "&:hover": {

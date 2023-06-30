@@ -19,6 +19,7 @@ import {
 import { useStake } from "@/context";
 import { useNavigate } from "react-router-dom";
 import { printSol } from "@/utils";
+import { useInitEffect } from "@/hooks";
 
 const SEPARATE_TX = true;
 
@@ -37,7 +38,7 @@ export function Validators() {
 
   console.log(777, stakeAccountInfos);
 
-  useEffect(() => {
+  useInitEffect(() => {
     if (!wallet.connected) {
       navigate("/");
     }
@@ -55,7 +56,7 @@ export function Validators() {
       }
     };
     asyncCall();
-  }, [wallet]);
+  });
 
   const handleClick = async (votePubkey: string) => {
     if (wallet && wallet.publicKey) {

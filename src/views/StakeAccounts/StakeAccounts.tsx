@@ -1,7 +1,7 @@
 import { Button, Drawer } from "@mui/material";
 import { useStakeAccountsStyles } from "./useStakeAccountsStyles";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StakeAccount, solanaService } from "@/services";
 import { uid } from "react-uid";
 import { Loader } from "@/components";
@@ -10,6 +10,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { printJson, printSol } from "@/utils";
 import { useStake } from "@/context";
 import { DrawerContent } from "./components";
+import { useInitEffect } from "@/hooks";
 
 export function StakeAccounts() {
   const { classes } = useStakeAccountsStyles();
@@ -21,7 +22,7 @@ export function StakeAccounts() {
 
   const stake = useStake();
 
-  useEffect(() => {
+  useInitEffect(() => {
     const asyncCall = async () => {
       if (wallet.connected && wallet.publicKey) {
         setLoading(true);
@@ -37,7 +38,7 @@ export function StakeAccounts() {
       }
     };
     asyncCall();
-  }, []);
+  });
 
   return (
     <div className={classes.root}>

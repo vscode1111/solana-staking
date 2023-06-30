@@ -14,7 +14,7 @@ export interface LedgerHDWalletPath {
   change?: number;
 }
 
-export interface LedgerHDWalletAccount extends LedgerHDWalletPath {
+interface LedgerHDWalletAccount extends LedgerHDWalletPath {
   key: PublicKey;
 }
 

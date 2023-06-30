@@ -9,5 +9,5 @@ export interface WalletAdapter {
   connect: () => any;
   disconnect: () => any;
   // eslint-disable-next-line
-  on<T>(event: string, fn: () => void): this;
+  on(event: string, fn: () => void): this;
 }

@@ -1,5 +1,7 @@
 export interface Colors {
   black: string;
+  gray0: string;
+  gray1: string;
   white: string;
   green: string;
   red: string;
@@ -9,6 +11,8 @@ export interface Colors {
 
 export const COLORS: Colors = {
   black: "#000000",
+  gray0: "#28282A",
+  gray1: "#3D3D3F",
   white: "#ffffff",
   green: "#2BB95B",
   red: "#F13557",

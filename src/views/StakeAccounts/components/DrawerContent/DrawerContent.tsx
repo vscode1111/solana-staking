@@ -39,7 +39,7 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
 
     const signature1 = await wallet.sendTransaction(transaction1, connection);
     console.log(777, signature1);
-  }, []);
+  }, [connection, stakeAccount, wallet]);
 
   const handleWithdrawStake = useCallback(async () => {
     if (!wallet.publicKey) {
@@ -59,7 +59,7 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
 
     const signature1 = await wallet.sendTransaction(transaction1, connection);
     console.log(777, signature1, stakeAccount.lamports);
-  }, []);
+  }, [connection, stakeAccount, wallet]);
 
   return (
     <div className={classes.root}>

@@ -13,3 +13,7 @@ export function printError(error: any) {
 
   return error;
 }
+
+export function truncateAddres(address: string) {
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}

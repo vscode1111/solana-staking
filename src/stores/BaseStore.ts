@@ -1,25 +1,56 @@
 import { RootStore } from "@/stores";
-import { action, observable } from "mobx";
+import { sleep } from "@/utils";
 
-export const baseStoreProps: Partial<Record<keyof BaseStore, any>> = {
-  isFetching: observable,
-  isSaving: observable,
-  incrementFetching: action,
-  clear: action,
-};
+export const baseStoreProps: Partial<Record<keyof BaseStore, any>> = {};
 
 export abstract class BaseStore {
-  isFetching = 0;
-  isSaving = false;
   rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
   }
 
-  clear() {}
+  statusHandler = <T>(
+    actionFunc: () => Promise<T>,
+    statusField?: keyof this,
+    errorField?: keyof this,
+    onSuccess?: (res: T) => Promise<void>,
+  ): Promise<void | T> => {
+    const statusFieldStr = String(statusField);
+    const errorFieldStr = String(errorField);
 
-  incrementFetching() {
-    this.isFetching++;
-  }
+    if (statusField) {
+      (this as any)[statusFieldStr] = "fetching";
+    }
+    if (errorFieldStr) {
+      (this as any)[errorFieldStr] = null;
+    }
+
+    return actionFunc()
+      .then(async (result) => {
+        await sleep(0);
+        if (onSuccess) await onSuccess(result);
+        return result;
+      })
+      .then((res) => {
+        if (statusFieldStr) {
+          (this as any)[statusFieldStr] = "success";
+        }
+
+        return Promise.resolve(res);
+      })
+      .catch((err: any) => {
+        console.error(err);
+
+        if (errorFieldStr) {
+          (this as any)[errorFieldStr] = err;
+        }
+
+        if (statusFieldStr) {
+          (this as any)[statusFieldStr] = "error";
+        }
+
+        // throw err;
+      });
+  };
 }

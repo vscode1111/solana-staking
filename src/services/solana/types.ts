@@ -55,7 +55,7 @@ export interface StakeAccount {
 
 export type InflationRewardNull = InflationReward | null;
 
-export interface Reward extends InflationReward {}
+export type Reward = InflationReward;
 
 export type RewardNull = Reward | null;
 
