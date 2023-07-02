@@ -10,11 +10,13 @@ export const useStakeAccountsStyles = makeStyles()(() => ({
   navigation: {
     display: "flex",
     justifyContent: "space-between",
+    marginBottom: 20,
   },
   content: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    gap: 5,
   },
 }));

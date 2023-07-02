@@ -1,13 +1,19 @@
 import { RootStore } from "@/stores";
 import { sleep } from "@/utils";
+import { action, makeObservable, runInAction } from "mobx";
 
-export const baseStoreProps: Partial<Record<keyof BaseStore, any>> = {};
+export const baseStoreProps: Partial<Record<keyof BaseStore, any>> = {
+  // statusHandler: action,
+};
 
 export abstract class BaseStore {
   rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+    makeObservable(this, {
+      statusHandler: action,
+    });
   }
 
   statusHandler = <T>(
@@ -33,22 +39,24 @@ export abstract class BaseStore {
         return result;
       })
       .then((res) => {
-        if (statusFieldStr) {
+        runInAction(() => { 
           (this as any)[statusFieldStr] = "success";
-        }
+        })
 
         return Promise.resolve(res);
       })
       .catch((err: any) => {
         console.error(err);
 
-        if (errorFieldStr) {
-          (this as any)[errorFieldStr] = err;
-        }
-
-        if (statusFieldStr) {
-          (this as any)[statusFieldStr] = "error";
-        }
+        runInAction(() => { 
+          if (errorFieldStr) {
+            (this as any)[errorFieldStr] = err;
+          }
+  
+          if (statusFieldStr) {
+            (this as any)[statusFieldStr] = "error";
+          }
+        })
 
         // throw err;
       });
