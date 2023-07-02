@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { RootStore } from "./RootStore";
 import { BaseStore, baseStoreProps } from "./BaseStore";
 import { LedgerHDWalletAccount, LedgerWalletAdapter1, getLedgerPathList } from "@/utils";
@@ -36,6 +36,7 @@ export class LedgerStore extends BaseStore {
       fetchError: observable,
       init: action,
       setSelectedAccount: action,
+      fetchAddresses: action,
       selectedAccount: computed,
     });
   }
@@ -47,15 +48,17 @@ export class LedgerStore extends BaseStore {
   async init() {
     await this.fetchAddresses();
 
-    this.accounts0 = this.accounts?.filter(
-      (account) => account.account === undefined && account.change === undefined,
-    );
-    this.accounts1 = this.accounts?.filter(
-      (account) => account.account !== undefined && account.change === undefined,
-    );
-    this.accounts2 = this.accounts?.filter(
-      (account) => account.account !== undefined && account.change !== undefined,
-    );
+    runInAction(() => { 
+      this.accounts0 = this.accounts?.filter(
+        (account) => account.account === undefined && account.change === undefined,
+      );
+      this.accounts1 = this.accounts?.filter(
+        (account) => account.account !== undefined && account.change === undefined,
+      );
+      this.accounts2 = this.accounts?.filter(
+        (account) => account.account !== undefined && account.change !== undefined,
+      );
+    })
 
     await this.fetchBalance0();
     await this.fetchBalance1();

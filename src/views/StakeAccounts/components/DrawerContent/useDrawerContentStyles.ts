@@ -16,5 +16,6 @@ export const useDrawerContentStyles = makeStyles()((theme) => ({
   navigation: {
     display: "flex",
     justifyContent: "space-between",
+    marginBottom: 20,
   },
 }));
