@@ -32,9 +32,11 @@ export const MyWallet: React.FC = () => {
         <span className="button-wrapper">
           <WalletModalProvider>
             <WalletMultiButton />
-            <Link to={`/${ROUTE.STAKE_ACCOUNTS}`}>
-              <Button>Balance : {`${balance} SOL`}</Button>
-            </Link>
+            {wallet.connected && (
+              <Link to={`/${ROUTE.STAKE_ACCOUNTS}`}>
+                <Button>Balance : {`${balance} SOL`}</Button>
+              </Link>
+            )}
           </WalletModalProvider>
         </span>
       </div>

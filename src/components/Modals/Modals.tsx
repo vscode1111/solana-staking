@@ -18,7 +18,9 @@ export const Modals: FC = observer(() => {
       <div className={classes.root}>
         <div className={classes.header}>
           <div />
-          <Button className={classes.close} onClick={() => modals.closeModal()}>Close</Button>
+          <Button className={classes.close} onClick={() => modals.closeModal()}>
+            Close
+          </Button>
         </div>
         {render()}
       </div>

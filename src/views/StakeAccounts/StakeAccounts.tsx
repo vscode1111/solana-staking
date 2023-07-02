@@ -2,42 +2,28 @@ import { Button, Drawer } from "@mui/material";
 import { useStakeAccountsStyles } from "./useStakeAccountsStyles";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { StakeAccount, solanaService } from "@/services";
+import { StakeAccount } from "@/services";
 import { uid } from "react-uid";
 import { Loader } from "@/components";
 import { ROUTE } from "@/consts";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { printJson, printValue } from "@/utils";
-import { useStake } from "@/context";
+import { printValue } from "@/utils";
 import { DrawerContent } from "./components";
-import { useInitEffect } from "@/hooks";
+import { useInitWalletEffect, useStores } from "@/hooks";
+import { observer } from "mobx-react-lite";
 
-export function StakeAccounts() {
+export const StakeAccounts = observer(() => {
   const { classes } = useStakeAccountsStyles();
-  const [stakeAccountInfos, setStakeAccountInfos] = useState<StakeAccount[]>([]);
-  const [isLoading, setLoading] = useState(false);
   const [stakeAccount, setStakeAccount] = useState<StakeAccount | null>(null);
 
-  const wallet = useWallet();
+  const { staking } = useStores();
+  const { stakeAccountInfos, isFetching } = staking;
 
-  const stake = useStake();
+  useInitWalletEffect((wallet) => {
+    if (!wallet.publicKey) {
+      return;
+    }
 
-  useInitEffect(() => {
-    const asyncCall = async () => {
-      if (wallet.connected && wallet.publicKey) {
-        setLoading(true);
-        try {
-          const stakeAccountInfo = await solanaService.getStakeAccountInfos(wallet.publicKey);
-          console.log(printJson(stakeAccountInfo));
-          setStakeAccountInfos(stakeAccountInfo);
-          stake.setStakeAccountInfos(stakeAccountInfo);
-        } catch (e) {
-          console.log(e);
-        }
-        setLoading(false);
-      }
-    };
-    asyncCall();
+    staking.fetchStakeAccountInfos(wallet.publicKey);
   });
 
   return (
@@ -46,14 +32,14 @@ export function StakeAccounts() {
         <Link to={`/`}>
           <Button>Back</Button>
         </Link>
-        {!isLoading && (
+        {!isFetching && (
           <Link to={`/${ROUTE.VALIDATORS}`}>
             <Button>Add</Button>
           </Link>
         )}
       </div>
       <div className={classes.content}>
-        {isLoading ? (
+        {isFetching ? (
           <Loader size={40} />
         ) : (
           <>
@@ -73,4 +59,4 @@ export function StakeAccounts() {
       </div>
     </div>
   );
-}
+});

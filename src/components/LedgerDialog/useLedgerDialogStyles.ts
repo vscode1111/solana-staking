@@ -12,7 +12,7 @@ export const useLedgerDialogStyles = makeStyles()((theme) => ({
   },
   back: {
     width: "100%",
-    backgroundColor: theme.colors.violet
+    backgroundColor: theme.colors.violet,
   },
   button: {
     justifyContent: "space-between",

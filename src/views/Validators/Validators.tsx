@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import { useValidatorsStyles } from "./useValidatorsStyles";
 import { ROUTE } from "@/consts";
 import { Button } from "@mui/material";
-import { ValidatorInfo, solanaService } from "@/services";
-import { useEffect, useState } from "react";
+import { solanaService } from "@/services";
 import { Loader } from "@/components";
 import { uid } from "react-uid";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -16,46 +15,28 @@ import {
   StakeProgram,
   Transaction,
 } from "@solana/web3.js";
-import { useStake } from "@/context";
-import { useNavigate } from "react-router-dom";
 import { printValue } from "@/utils";
-import { useInitEffect } from "@/hooks";
+import { useInitWalletEffect, useStores } from "@/hooks";
+import { observer } from "mobx-react-lite";
 
 const SEPARATE_TX = true;
 
-export function Validators() {
+export const Validators = observer(() => {
   const { classes } = useValidatorsStyles();
-  const [validators, setValidators] = useState<ValidatorInfo[]>([]);
-  const [isLoading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const { connection } = useConnection();
   const wallet = useWallet();
 
-  const { stakeAccountInfos } = useStake();
+  // const { stakeAccountInfos } = useStake();
+  const { staking } = useStores();
+  const { stakeAccountInfos, validators, isFetching } = staking;
 
   console.log(111, wallet.connected, wallet.publicKey);
 
   console.log(777, stakeAccountInfos);
 
-  useInitEffect(() => {
-    if (!wallet.connected) {
-      navigate("/");
-    }
-
-    const asyncCall = async () => {
-      if (wallet.connected && wallet.publicKey) {
-        setLoading(true);
-        try {
-          const validators = await solanaService.getCurrentValidators(10);
-          setValidators(validators);
-        } catch (e) {
-          console.log(e);
-        }
-        setLoading(false);
-      }
-    };
-    asyncCall();
+  useInitWalletEffect(() => {
+    staking.fetchValidators();
   });
 
   const handleClick = async (votePubkey: string) => {
@@ -136,7 +117,7 @@ export function Validators() {
         </Link>
       </div>
       <div className={classes.content}>
-        {isLoading ? (
+        {isFetching ? (
           <Loader size={40} />
         ) : (
           <>
@@ -150,4 +131,4 @@ export function Validators() {
       </div>
     </div>
   );
-}
+});
