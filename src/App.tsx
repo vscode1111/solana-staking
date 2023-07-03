@@ -5,12 +5,11 @@ import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
-import { StakeProvider } from "@/context";
 import { MainRouter } from "@/views";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "@/themes";
 import { LedgerWalletAdapter1 } from "@/utils";
-import { LedgerDialog, Modals } from "./components";
+import { LedgerDialog, Modals, TxModals } from "./components";
 import { observer } from "mobx-react";
 import { useStores } from "./hooks";
 
@@ -52,10 +51,9 @@ export const App = observer(() => {
         <ThemeProvider theme={theme}>
           <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets}>
-              <StakeProvider>
-                <MainRouter />
-                <Modals />
-              </StakeProvider>
+              <MainRouter />
+              <Modals />
+              <TxModals />
             </WalletProvider>
           </ConnectionProvider>
         </ThemeProvider>

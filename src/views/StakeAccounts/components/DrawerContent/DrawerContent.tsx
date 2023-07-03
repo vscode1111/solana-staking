@@ -3,19 +3,22 @@ import { useDrawerContentStyles } from "./useDrawerContentStyles";
 import { StakeAccount } from "@/services";
 import { useMemo, useCallback } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, StakeProgram, Transaction } from "@solana/web3.js";
 import { printValue } from "@/utils";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@/hooks";
+import { Loader } from "@/components";
 
 interface DrawerContentProps {
   stakeAccount: StakeAccount;
   onClose: () => void;
 }
 
-export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
+export const DrawerContent = observer(({ stakeAccount, onClose }: DrawerContentProps) => {
   const { classes } = useDrawerContentStyles();
+  const { staking, txModals } = useStores();
+  const { isAction } = staking;
   const { connection } = useConnection();
   const wallet = useWallet();
-  console.log(111, stakeAccount);
 
   const isDeactivateStake = useMemo(
     () => ["active", "activating"].includes(stakeAccount.status),
@@ -24,41 +27,21 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
   const isWithdrawStake = useMemo(() => ["inactive"].includes(stakeAccount.status), [stakeAccount]);
 
   const handleDeactivateStake = useCallback(async () => {
-    if (!wallet.publicKey) {
-      return;
-    }
-
-    const transaction1 = new Transaction();
-
-    transaction1.add(
-      StakeProgram.deactivate({
-        stakePubkey: new PublicKey(stakeAccount.stakeAccount),
-        authorizedPubkey: wallet.publicKey,
-      }),
-    );
-
-    const signature1 = await wallet.sendTransaction(transaction1, connection);
-    console.log(777, signature1);
-  }, [connection, stakeAccount, wallet]);
+    txModals.openModal("to deactivate stake");
+    const signature = await staking.deactivateStake(wallet, connection, stakeAccount);
+    txModals.showTx(signature, () => {
+      wallet.publicKey && staking.fetchStakeAccountInfos(wallet.publicKey);
+      onClose();
+    });
+  }, [staking, connection, stakeAccount, wallet]);
 
   const handleWithdrawStake = useCallback(async () => {
-    if (!wallet.publicKey) {
-      return;
-    }
-
-    const transaction1 = new Transaction();
-
-    transaction1.add(
-      StakeProgram.withdraw({
-        stakePubkey: new PublicKey(stakeAccount.stakeAccount),
-        authorizedPubkey: wallet.publicKey,
-        toPubkey: wallet.publicKey,
-        lamports: stakeAccount.lamports,
-      }),
-    );
-
-    const signature1 = await wallet.sendTransaction(transaction1, connection);
-    console.log(777, signature1, stakeAccount.lamports);
+    txModals.openModal("to withdraw stake");
+    const signature = await staking.withdrawStake(wallet, connection, stakeAccount);
+    txModals.showTx(signature, () => {
+      wallet.publicKey && staking.fetchStakeAccountInfos(wallet.publicKey);
+      onClose();
+    });
   }, [connection, stakeAccount, wallet]);
 
   return (
@@ -70,9 +53,17 @@ export function DrawerContent({ stakeAccount, onClose }: DrawerContentProps) {
       </div>
       <div className={classes.navigation}>
         <Button onClick={onClose}>Back</Button>
-        {isDeactivateStake && <Button onClick={handleDeactivateStake}>Deactivate stake</Button>}
-        {isWithdrawStake && <Button onClick={handleWithdrawStake}>Withdraw stake</Button>}
+        {isDeactivateStake && (
+          <Button onClick={handleDeactivateStake}>
+            {isAction && <Loader size={25} />} Deactivate stake
+          </Button>
+        )}
+        {isWithdrawStake && (
+          <Button onClick={handleWithdrawStake}>
+            {isAction && <Loader size={25} />} Withdraw stake
+          </Button>
+        )}
       </div>
     </div>
   );
-}
+});

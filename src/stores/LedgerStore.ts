@@ -48,7 +48,7 @@ export class LedgerStore extends BaseStore {
   async init() {
     await this.fetchAddresses();
 
-    runInAction(() => { 
+    runInAction(() => {
       this.accounts0 = this.accounts?.filter(
         (account) => account.account === undefined && account.change === undefined,
       );
@@ -58,7 +58,7 @@ export class LedgerStore extends BaseStore {
       this.accounts2 = this.accounts?.filter(
         (account) => account.account !== undefined && account.change !== undefined,
       );
-    })
+    });
 
     await this.fetchBalance0();
     await this.fetchBalance1();

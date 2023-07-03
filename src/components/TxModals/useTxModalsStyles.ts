@@ -2,11 +2,11 @@ import { makeStyles } from "tss-react/mui";
 
 const MARGIN = 30;
 
-export const useModalsStyles = makeStyles()((theme) => ({
+export const useTxModalsStyles = makeStyles()((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    // height: `calc(100vh - ${2 * MARGIN}px)`,
+    height: `calc(100vh - ${2 * MARGIN}x)`,
     backgroundColor: theme.colors.gray0,
     margin: MARGIN,
     borderRadius: 20,
@@ -19,5 +19,13 @@ export const useModalsStyles = makeStyles()((theme) => ({
   },
   close: {
     backgroundColor: theme.colors.red,
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  txText: {
+    display: "flex",
+    gap: 15,
   },
 }));

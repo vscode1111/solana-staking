@@ -83,8 +83,6 @@ export class LedgerWalletAdapter2 implements WalletAdapter {
       // @TODO: transport selection (WebUSB, WebHID, bluetooth, ...)
       this._transport = await TransportWebUSB.create();
 
-      console.log(222, this._transport);
-
       // @TODO: account selection
       if (args) {
         const { account, change } = args as {
@@ -92,8 +90,6 @@ export class LedgerWalletAdapter2 implements WalletAdapter {
           change?: number;
         };
         this._derivationPath = getSolanaDerivationPath(account, change);
-
-        console.log(333, this._derivationPath);
       }
       this._publicKey = await getPublicKey(this._transport, this._derivationPath);
       // "connect", this._publicKey);

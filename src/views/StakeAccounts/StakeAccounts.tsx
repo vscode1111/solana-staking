@@ -1,4 +1,4 @@
-import { Button, Drawer } from "@mui/material";
+import { Button, Drawer, Typography } from "@mui/material";
 import { useStakeAccountsStyles } from "./useStakeAccountsStyles";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -19,11 +19,7 @@ export const StakeAccounts = observer(() => {
   const { stakeAccountInfos, isFetching } = staking;
 
   useInitWalletEffect((wallet) => {
-    if (!wallet.publicKey) {
-      return;
-    }
-
-    staking.fetchStakeAccountInfos(wallet.publicKey);
+    wallet.publicKey && staking.fetchStakeAccountInfos(wallet.publicKey);
   });
 
   return (
@@ -32,11 +28,10 @@ export const StakeAccounts = observer(() => {
         <Link to={`/`}>
           <Button>Back</Button>
         </Link>
-        {!isFetching && (
-          <Link to={`/${ROUTE.VALIDATORS}`}>
-            <Button>Add</Button>
-          </Link>
-        )}
+        <Typography variant="h4">Stake Accounts</Typography>
+        <Link to={`/${ROUTE.VALIDATORS}`}>
+          <Button disabled={isFetching}>Add</Button>
+        </Link>
       </div>
       <div className={classes.content}>
         {isFetching ? (

@@ -39,24 +39,24 @@ export abstract class BaseStore {
         return result;
       })
       .then((res) => {
-        runInAction(() => { 
+        runInAction(() => {
           (this as any)[statusFieldStr] = "success";
-        })
+        });
 
         return Promise.resolve(res);
       })
       .catch((err: any) => {
         console.error(err);
 
-        runInAction(() => { 
+        runInAction(() => {
           if (errorFieldStr) {
             (this as any)[errorFieldStr] = err;
           }
-  
+
           if (statusFieldStr) {
             (this as any)[statusFieldStr] = "error";
           }
-        })
+        });
 
         // throw err;
       });

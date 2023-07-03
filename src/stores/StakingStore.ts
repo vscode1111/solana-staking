@@ -3,8 +3,17 @@ import { RootStore } from "./RootStore";
 import { BaseStore, baseStoreProps } from "./BaseStore";
 import { NormalizedError, StatusFetching } from "./types";
 import { StakeAccount, ValidatorInfo, solanaService } from "@/services";
-import { PublicKey } from "@solana/web3.js";
-import { sleep } from "@/utils";
+import {
+  Authorized,
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  Lockup,
+  PublicKey,
+  StakeProgram,
+  Transaction,
+} from "@solana/web3.js";
+import { WalletContextState } from "@solana/wallet-adapter-react";
 
 export class StakingStore extends BaseStore {
   public stakeAccountInfos: StakeAccount[];
@@ -12,6 +21,9 @@ export class StakingStore extends BaseStore {
 
   public fetchStatus: StatusFetching = "init";
   public fetchError: NormalizedError;
+
+  public actionStatus: StatusFetching = "init";
+  public actionError: NormalizedError;
 
   constructor(rootStore: RootStore) {
     super(rootStore);
@@ -21,8 +33,12 @@ export class StakingStore extends BaseStore {
       fetchStatus: observable,
       fetchError: observable,
       isFetching: computed,
+      actionStatus: observable,
+      actionError: observable,
+      isAction: computed,
       setStakeAccountInfos: action,
       fetchValidators: action,
+      deactivateStake: action,
     });
 
     this.stakeAccountInfos = [];
@@ -31,6 +47,10 @@ export class StakingStore extends BaseStore {
 
   public get isFetching() {
     return this.fetchStatus === "fetching";
+  }
+
+  public get isAction() {
+    return this.actionStatus === "fetching";
   }
 
   public async fetchStakeAccountInfos(userAccountPublicKey: PublicKey) {
@@ -46,7 +66,6 @@ export class StakingStore extends BaseStore {
   public async fetchValidators() {
     await this.statusHandler(
       async () => {
-        console.log(344, "fetchValidators");
         this.validators = await solanaService.getCurrentValidators(10);
       },
       "fetchStatus",
@@ -56,5 +75,130 @@ export class StakingStore extends BaseStore {
 
   public setStakeAccountInfos(stakeAccountInfos: StakeAccount[]) {
     this.stakeAccountInfos = stakeAccountInfos;
+  }
+
+  public async delegateStake(
+    wallet: WalletContextState,
+    connection: Connection,
+    stakeAccount: Keypair,
+    votePubkey: string,
+  ) {
+    return this.statusHandler(
+      async () => {
+        if (!wallet.publicKey) {
+          return;
+        }
+
+        const transaction1 = new Transaction();
+
+        transaction1.add(
+          StakeProgram.createAccount({
+            authorized: new Authorized(wallet.publicKey, wallet.publicKey),
+            fromPubkey: wallet.publicKey,
+            lamports: 0.1 * LAMPORTS_PER_SOL,
+            lockup: new Lockup(0, 0, wallet.publicKey),
+            stakePubkey: stakeAccount.publicKey,
+          }),
+        );
+
+        transaction1.add(
+          StakeProgram.delegate({
+            stakePubkey: stakeAccount.publicKey,
+            authorizedPubkey: wallet.publicKey,
+            votePubkey: new PublicKey(votePubkey),
+          }),
+        );
+
+        return wallet.sendTransaction(transaction1, connection, {
+          signers: [stakeAccount],
+        });
+      },
+      "actionStatus",
+      "actionError",
+    );
+  }
+
+  public async mergeStake(
+    wallet: WalletContextState,
+    connection: Connection,
+    stakeAccount: Keypair,
+    foundStakeAccountInfo: StakeAccount,
+  ) {
+    return this.statusHandler(
+      async () => {
+        if (!wallet.publicKey) {
+          return;
+        }
+
+        const transaction2 = new Transaction();
+        transaction2.add(
+          StakeProgram.merge({
+            sourceStakePubKey: stakeAccount.publicKey,
+            stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
+            authorizedPubkey: wallet.publicKey,
+          }),
+        );
+
+        return wallet.sendTransaction(transaction2, connection);
+      },
+      "actionStatus",
+      "actionError",
+    );
+  }
+
+  public async deactivateStake(
+    wallet: WalletContextState,
+    connection: Connection,
+    stakeAccount: StakeAccount,
+  ) {
+    return this.statusHandler(
+      async () => {
+        if (!wallet.publicKey) {
+          return;
+        }
+
+        const transaction1 = new Transaction();
+
+        transaction1.add(
+          StakeProgram.deactivate({
+            stakePubkey: new PublicKey(stakeAccount.stakeAccount),
+            authorizedPubkey: wallet.publicKey,
+          }),
+        );
+
+        return wallet.sendTransaction(transaction1, connection);
+      },
+      "actionStatus",
+      "actionError",
+    );
+  }
+
+  public async withdrawStake(
+    wallet: WalletContextState,
+    connection: Connection,
+    stakeAccount: StakeAccount,
+  ) {
+    return this.statusHandler(
+      async () => {
+        if (!wallet.publicKey) {
+          return;
+        }
+
+        const transaction1 = new Transaction();
+
+        transaction1.add(
+          StakeProgram.withdraw({
+            stakePubkey: new PublicKey(stakeAccount.stakeAccount),
+            authorizedPubkey: wallet.publicKey,
+            toPubkey: wallet.publicKey,
+            lamports: stakeAccount.lamports,
+          }),
+        );
+
+        return wallet.sendTransaction(transaction1, connection);
+      },
+      "actionStatus",
+      "actionError",
+    );
   }
 }

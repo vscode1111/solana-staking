@@ -148,8 +148,6 @@ export class Solana {
     for (let i = 0; i < maxAttempts; i++) {
       const txStatus = await this.getSignatureStatus(txSignature);
 
-      console.log(111, txStatus);
-
       // if (txStatus.value?.confirmationStatus === status || txStatus.value === null) {
       if (txStatus.value?.confirmationStatus === status) {
         return txStatus;

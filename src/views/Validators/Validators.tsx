@@ -1,25 +1,14 @@
 import { Link } from "react-router-dom";
 import { useValidatorsStyles } from "./useValidatorsStyles";
 import { ROUTE } from "@/consts";
-import { Button } from "@mui/material";
-import { solanaService } from "@/services";
+import { Button, Typography } from "@mui/material";
 import { Loader } from "@/components";
 import { uid } from "react-uid";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import {
-  Authorized,
-  Keypair,
-  LAMPORTS_PER_SOL,
-  Lockup,
-  PublicKey,
-  StakeProgram,
-  Transaction,
-} from "@solana/web3.js";
+import { Keypair } from "@solana/web3.js";
 import { printValue } from "@/utils";
 import { useInitWalletEffect, useStores } from "@/hooks";
 import { observer } from "mobx-react-lite";
-
-const SEPARATE_TX = true;
 
 export const Validators = observer(() => {
   const { classes } = useValidatorsStyles();
@@ -27,13 +16,8 @@ export const Validators = observer(() => {
   const { connection } = useConnection();
   const wallet = useWallet();
 
-  // const { stakeAccountInfos } = useStake();
-  const { staking } = useStores();
+  const { staking, txModals } = useStores();
   const { stakeAccountInfos, validators, isFetching } = staking;
-
-  console.log(111, wallet.connected, wallet.publicKey);
-
-  console.log(777, stakeAccountInfos);
 
   useInitWalletEffect(() => {
     staking.fetchValidators();
@@ -41,71 +25,40 @@ export const Validators = observer(() => {
 
   const handleClick = async (votePubkey: string) => {
     if (wallet && wallet.publicKey) {
-      const transaction1 = new Transaction();
-
+      txModals.openModal("to delegate stake");
       const stakeAccount = Keypair.generate();
+      let signature = await staking.delegateStake(wallet, connection, stakeAccount, votePubkey);
 
-      transaction1.add(
-        StakeProgram.createAccount({
-          authorized: new Authorized(wallet.publicKey, wallet.publicKey),
-          fromPubkey: wallet.publicKey,
-          lamports: 0.1 * LAMPORTS_PER_SOL,
-          lockup: new Lockup(0, 0, wallet.publicKey),
-          stakePubkey: stakeAccount.publicKey,
-        }),
-      );
-
-      transaction1.add(
-        StakeProgram.delegate({
-          stakePubkey: stakeAccount.publicKey,
-          authorizedPubkey: wallet.publicKey,
-          votePubkey: new PublicKey(votePubkey),
-        }),
-      );
+      await new Promise((res) => {
+        txModals.showTx(signature, () => {
+          res(0);
+          staking.fetchValidators();
+        });
+      });
 
       const foundStakeAccountInfo = stakeAccountInfos.find(
         (info) => info.validator === votePubkey && info.status.toLowerCase() === "activating",
       );
-      console.log(222, foundStakeAccountInfo?.stakeAccount);
 
-      if (!SEPARATE_TX) {
-        if (foundStakeAccountInfo) {
-          transaction1.add(
-            StakeProgram.merge({
-              sourceStakePubKey: stakeAccount.publicKey,
-              stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
-              authorizedPubkey: wallet.publicKey,
-            }),
-          );
-        }
+      if (!foundStakeAccountInfo) {
+        return;
       }
 
-      const signature1 = await wallet.sendTransaction(transaction1, connection, {
-        signers: [stakeAccount],
-      });
+      txModals.openModal("to merge stake");
+      signature = await staking.mergeStake(wallet, connection, stakeAccount, foundStakeAccountInfo);
+      txModals.showTx(signature, () => staking.fetchValidators());
 
-      console.log(777, signature1);
-
-      let txStatus = await solanaService.waitSignatureStatus(signature1);
-      console.log(888, txStatus);
-
-      if (SEPARATE_TX) {
-        if (foundStakeAccountInfo) {
-          const transaction2 = new Transaction();
-          transaction2.add(
-            StakeProgram.merge({
-              sourceStakePubKey: stakeAccount.publicKey,
-              stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
-              authorizedPubkey: wallet.publicKey,
-            }),
-          );
-
-          const signature2 = await wallet.sendTransaction(transaction2, connection);
-          console.log(777, signature1);
-          txStatus = await solanaService.waitSignatureStatus(signature2);
-          console.log(999, txStatus);
-        }
-      }
+      // if (!SEPARATE_TX) {
+      //   if (foundStakeAccountInfo) {
+      //     transaction1.add(
+      //       StakeProgram.merge({
+      //         sourceStakePubKey: stakeAccount.publicKey,
+      //         stakePubkey: new PublicKey(foundStakeAccountInfo.stakeAccount),
+      //         authorizedPubkey: wallet.publicKey,
+      //       }),
+      //     );
+      //   }
+      // }
     }
   };
 
@@ -115,6 +68,8 @@ export const Validators = observer(() => {
         <Link to={`/${ROUTE.STAKE_ACCOUNTS}`}>
           <Button>Back</Button>
         </Link>
+        <Typography variant="h4">Validators</Typography>
+        <div />
       </div>
       <div className={classes.content}>
         {isFetching ? (

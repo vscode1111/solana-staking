@@ -195,7 +195,17 @@ export const theme = createTheme(baseTheme, {
         paper: {
           width: "100%",
           color: COLORS.white,
-          backgroundColor: COLORS.black,
+          backgroundColor: COLORS.gray0,
+        },
+      },
+    },
+
+    MuiModal: {
+      styleOverrides: {
+        root: {
+          top: "50%",
+          left: "0",
+          transform: "translate(0, -50%)",
         },
       },
     },

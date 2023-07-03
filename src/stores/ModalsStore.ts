@@ -17,16 +17,16 @@ export class ModalsStore extends BaseStore {
     });
   }
 
-  public openModal = (render: ReactRenderFn, onClose?: () => any) => {
+  public openModal(render: ReactRenderFn, onClose?: () => any) {
     this.render = render;
     this.onClose = onClose;
-  };
+  }
 
-  public closeModal = () => {
+  public closeModal() {
     this.render = null;
 
     if (this.onClose instanceof Function) {
       this.onClose();
     }
-  };
+  }
 }
