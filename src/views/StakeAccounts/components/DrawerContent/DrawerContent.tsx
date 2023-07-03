@@ -29,7 +29,7 @@ export const DrawerContent = observer(({ stakeAccount, onClose }: DrawerContentP
   const handleDeactivateStake = useCallback(async () => {
     txModals.openModal("to deactivate stake");
     const signature = await staking.deactivateStake(wallet, connection, stakeAccount);
-    txModals.showTx(signature, () => {
+    txModals._showTx(signature, () => {
       wallet.publicKey && staking.fetchStakeAccountInfos(wallet.publicKey);
       onClose();
     });
@@ -38,7 +38,7 @@ export const DrawerContent = observer(({ stakeAccount, onClose }: DrawerContentP
   const handleWithdrawStake = useCallback(async () => {
     txModals.openModal("to withdraw stake");
     const signature = await staking.withdrawStake(wallet, connection, stakeAccount);
-    txModals.showTx(signature, () => {
+    txModals._showTx(signature, () => {
       wallet.publicKey && staking.fetchStakeAccountInfos(wallet.publicKey);
       onClose();
     });

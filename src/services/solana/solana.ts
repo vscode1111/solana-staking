@@ -89,8 +89,7 @@ export class Solana {
   }
 
   public async getBalance(userAccountPublicKey: PublicKey) {
-    const balance = await this.connection.getBalance(userAccountPublicKey);
-    return balance / LAMPORTS_PER_SOL;
+    return this.connection.getBalance(userAccountPublicKey);
   }
 
   public async getCurrentValidators(limit?: number) {

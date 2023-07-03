@@ -32,12 +32,7 @@ export const App = observer(() => {
       new LedgerWalletAdapter1({
         onConnecting: async (adapter) => {
           ledger.setAdapter(adapter);
-          await new Promise((res) => {
-            modals.openModal(
-              () => <LedgerDialog />,
-              () => res(0),
-            );
-          });
+          await modals.openModal(() => <LedgerDialog />);
           return ledger.selectedAccount;
         },
       }),

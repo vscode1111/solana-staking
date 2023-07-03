@@ -16,6 +16,8 @@ import {
 import { WalletContextState } from "@solana/wallet-adapter-react";
 
 export class StakingStore extends BaseStore {
+  public balance: number;
+
   public stakeAccountInfos: StakeAccount[];
   public validators: ValidatorInfo[];
 
@@ -29,6 +31,7 @@ export class StakingStore extends BaseStore {
     super(rootStore);
     makeObservable(this, {
       ...baseStoreProps,
+      balance: observable,
       stakeAccountInfos: observable,
       fetchStatus: observable,
       fetchError: observable,
@@ -36,11 +39,13 @@ export class StakingStore extends BaseStore {
       actionStatus: observable,
       actionError: observable,
       isAction: computed,
+      fetchBalance: action,
       setStakeAccountInfos: action,
       fetchValidators: action,
       deactivateStake: action,
     });
 
+    this.balance = 0;
     this.stakeAccountInfos = [];
     this.validators = [];
   }
@@ -51,6 +56,16 @@ export class StakingStore extends BaseStore {
 
   public get isAction() {
     return this.actionStatus === "fetching";
+  }
+
+  public async fetchBalance(userAccountPublicKey: PublicKey) {
+    await this.statusHandler(
+      async () => {
+        this.balance = await solanaService.getBalance(userAccountPublicKey);
+      },
+      "fetchStatus",
+      "fetchError",
+    );
   }
 
   public async fetchStakeAccountInfos(userAccountPublicKey: PublicKey) {

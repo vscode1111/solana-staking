@@ -1,29 +1,22 @@
 import "./WalletConnection.css";
 import { ROUTE } from "@/consts";
 import { Button } from "@mui/material";
-import { solanaService } from "@/services";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletModalProvider, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { printSol } from "@/utils";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@/hooks";
+import { Loader } from "../Loader";
 
-export const MyWallet: React.FC = () => {
-  const [balance, setBalance] = useState(0);
-
+export const MyWallet = observer(() => {
   const wallet = useWallet();
+  const { staking } = useStores();
+  const { balance, isFetching } = staking;
 
   useEffect(() => {
-    const asyncCall = async () => {
-      if (wallet.connected && wallet.publicKey) {
-        try {
-          const balance = await solanaService.getBalance(wallet.publicKey);
-          setBalance(balance);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    };
-    asyncCall();
+    wallet.publicKey && staking.fetchBalance(wallet.publicKey);
   }, [wallet]);
 
   return (
@@ -34,7 +27,9 @@ export const MyWallet: React.FC = () => {
             <WalletMultiButton />
             {wallet.connected && (
               <Link to={`/${ROUTE.STAKE_ACCOUNTS}`}>
-                <Button>Balance : {`${balance} SOL`}</Button>
+                <Button>
+                  {isFetching && <Loader size={25} />} Balance : {printSol(balance)}
+                </Button>
               </Link>
             )}
           </WalletModalProvider>
@@ -42,4 +37,4 @@ export const MyWallet: React.FC = () => {
       </div>
     </>
   );
-};
+});

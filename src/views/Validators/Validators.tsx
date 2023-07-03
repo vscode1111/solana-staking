@@ -15,7 +15,6 @@ export const Validators = observer(() => {
 
   const { connection } = useConnection();
   const wallet = useWallet();
-
   const { staking, txModals } = useStores();
   const { stakeAccountInfos, validators, isFetching } = staking;
 
@@ -29,11 +28,8 @@ export const Validators = observer(() => {
       const stakeAccount = Keypair.generate();
       let signature = await staking.delegateStake(wallet, connection, stakeAccount, votePubkey);
 
-      await new Promise((res) => {
-        txModals.showTx(signature, () => {
-          res(0);
-          staking.fetchValidators();
-        });
+      await txModals.showTx(signature, () => {
+        staking.fetchValidators();
       });
 
       const foundStakeAccountInfo = stakeAccountInfos.find(
@@ -46,7 +42,7 @@ export const Validators = observer(() => {
 
       txModals.openModal("to merge stake");
       signature = await staking.mergeStake(wallet, connection, stakeAccount, foundStakeAccountInfo);
-      txModals.showTx(signature, () => staking.fetchValidators());
+      txModals._showTx(signature, () => staking.fetchValidators());
 
       // if (!SEPARATE_TX) {
       //   if (foundStakeAccountInfo) {

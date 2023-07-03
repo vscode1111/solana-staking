@@ -17,9 +17,20 @@ export class ModalsStore extends BaseStore {
     });
   }
 
-  public openModal(render: ReactRenderFn, onClose?: () => any) {
+  private _openModal(render: ReactRenderFn, onClose?: () => any) {
     this.render = render;
     this.onClose = onClose;
+  }
+
+  public async openModal(render: ReactRenderFn, onClose?: () => any) {
+    await new Promise((res) => {
+      this._openModal(render, () => {
+        res(0);
+        if (onClose instanceof Function) {
+          onClose();
+        }
+      });
+    });
   }
 
   public closeModal() {

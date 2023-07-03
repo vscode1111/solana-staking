@@ -39,7 +39,7 @@ export class TxModalsStore extends BaseStore {
     this.text = text;
   }
 
-  public async showTx(tx: string | undefined | void, onFinish?: () => any) {
+  private async _showTx(tx: string | undefined | void, onFinish?: () => any) {
     this.tx = tx;
     await this.statusHandler(
       async () => {
@@ -52,6 +52,17 @@ export class TxModalsStore extends BaseStore {
     if (onFinish instanceof Function) {
       onFinish();
     }
+  }
+
+  public async showTx(tx: string | undefined | void, onFinish?: () => any) {
+    await new Promise((res) => {
+      this._showTx(tx, () => {
+        res(0);
+        if (onFinish instanceof Function) {
+          onFinish();
+        }
+      });
+    });
   }
 
   public closeModal() {
