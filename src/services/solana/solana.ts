@@ -13,12 +13,14 @@ import {
 import { InflationRewardNull, ParsedAccountInfo, RewardNull, StakeAccount } from "./types";
 import { mapAccountFn, mapRewardFn, mapValidatorFn } from "./utils";
 import { printJson, sleep } from "@/utils";
+import { BASE_RPC_URL } from "@/consts";
 
 export class Solana {
   private connection: Connection;
 
   constructor() {
-    this.connection = new Connection(clusterApiUrl("mainnet-beta"));
+    // this.connection = new Connection(clusterApiUrl("mainnet-beta"));
+    this.connection = new Connection(BASE_RPC_URL);
   }
 
   public async getAccountInfo(userAccountPublicKey: PublicKey): Promise<ParsedAccountInfo> {

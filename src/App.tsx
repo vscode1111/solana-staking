@@ -12,11 +12,16 @@ import { LedgerWalletAdapter1 } from "@/utils";
 import { LedgerDialog, Modals, TxModals } from "./components";
 import { observer } from "mobx-react";
 import { useStores } from "./hooks";
+import { BASE_RPC_URL } from "./consts";
+
+const endpoint = BASE_RPC_URL;
 
 export const App = observer(() => {
   const network = WalletAdapterNetwork.Mainnet;
 
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  // const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  console.log(111, network, endpoint);
 
   const { ledger, modals } = useStores();
 

@@ -104,7 +104,7 @@ export function getLedgerPathList(): LedgerHDWalletPath[] {
     result.push({ account: i });
   }
   for (let i = 0; i < ACCOUNT_COUNT; i++) {
-    result.push({ account: 0, change: i });
+    result.push({ account: i, change: 0 });
   }
 
   return result;

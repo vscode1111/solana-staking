@@ -35,7 +35,7 @@
     "test": "mocha -r ts-node/register -r tsconfig-paths/register 'src/**/*spec.ts' --timeout 50000",
     "lint:fix": "eslint --fix . && yarn format",
     "nuke": "shx rm -rf node_modules yarn.lock",
-    "http-server": "http-server dist -p 3099"
+    "http-server": "http-server dist -p 3090"
   },
   "dependencies": {
     "@angular/common": "^13.2.4",
