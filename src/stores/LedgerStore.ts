@@ -13,6 +13,7 @@ export class LedgerStore extends BaseStore {
   public accounts0?: LedgerHDWalletAccount[];
   public accounts1?: LedgerHDWalletAccount[];
   public accounts2?: LedgerHDWalletAccount[];
+  public accounts3?: LedgerHDWalletAccount[];
 
   public fetchStatus: StatusFetching = "init";
   public fetchError: NormalizedError;
@@ -20,6 +21,7 @@ export class LedgerStore extends BaseStore {
   public fetchStatus0: StatusFetching = "init";
   public fetchStatus1: StatusFetching = "init";
   public fetchStatus2: StatusFetching = "init";
+  public fetchStatus3: StatusFetching = "init";
 
   constructor(rootStore: RootStore) {
     super(rootStore);
@@ -29,10 +31,12 @@ export class LedgerStore extends BaseStore {
       accounts0: observable,
       accounts1: observable,
       accounts2: observable,
+      accounts3: observable,
       fetchStatus: observable,
       fetchStatus0: observable,
       fetchStatus1: observable,
       fetchStatus2: observable,
+      fetchStatus3: observable,
       fetchError: observable,
       init: action,
       setSelectedAccount: action,
@@ -56,13 +60,17 @@ export class LedgerStore extends BaseStore {
         (account) => account.account !== undefined && account.change === undefined,
       );
       this.accounts2 = this.accounts?.filter(
-        (account) => account.account !== undefined && account.change !== undefined,
+        (account) => account.account !== undefined && account.change === 0,
+      );
+      this.accounts3 = this.accounts?.filter(
+        (account) => account.account === 0 && account.change !== undefined && account.change !== 0,
       );
     });
 
     await this.fetchBalance0();
     await this.fetchBalance1();
     await this.fetchBalance2();
+    await this.fetchBalance3();
   }
 
   public async fetchAddresses() {
@@ -119,6 +127,10 @@ export class LedgerStore extends BaseStore {
 
   private async fetchBalance2() {
     await this.fetchBalance(this.accounts2, "fetchStatus2");
+  }
+
+  private async fetchBalance3() {
+    await this.fetchBalance(this.accounts3, "fetchStatus3");
   }
 
   public setSelectedAccount(account: LedgerHDWalletAccount) {

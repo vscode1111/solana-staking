@@ -19,9 +19,11 @@ export const LedgerDialog = observer(() => {
     accounts0,
     accounts1,
     accounts2,
+    accounts3,
     fetchStatus0,
     fetchStatus1,
     fetchStatus2,
+    fetchStatus3,
   } = ledger;
 
   useInitEffect(() => {
@@ -63,7 +65,7 @@ export const LedgerDialog = observer(() => {
           ) : (
             <>
               <DerivationPathButton
-                caption="m/44'/501'"
+                caption="m/44'/501+'"
                 accounts={toJS(accounts0)}
                 fetchStatus={fetchStatus0}
                 onClick={() => setSelectedAccounts(accounts0)}
@@ -79,6 +81,12 @@ export const LedgerDialog = observer(() => {
                 accounts={toJS(accounts2)}
                 fetchStatus={fetchStatus2}
                 onClick={() => setSelectedAccounts(accounts2)}
+              />
+              <DerivationPathButton
+                caption="m/44'/501'/0'/X'"
+                accounts={toJS(accounts3)}
+                fetchStatus={fetchStatus3}
+                onClick={() => setSelectedAccounts(accounts3)}
               />
             </>
           )}

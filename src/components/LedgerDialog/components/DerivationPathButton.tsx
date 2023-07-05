@@ -22,9 +22,19 @@ export const DerivationPathButton = ({
 
   const isReady = accounts && accounts.length > 0;
 
-  const address = useMemo(
-    () => (isReady ? accounts[0].publicKey?.toBase58() : ""),
+  const activeAccounts = useMemo(
+    () => (isReady ? accounts.filter((account) => account?.balance !== undefined) : []),
     [isReady, accounts],
+  );
+
+  const activeAddress = useMemo(
+    () =>
+      activeAccounts.length > 0
+        ? activeAccounts[0].publicKey?.toBase58()
+        : isReady
+        ? accounts[0].publicKey.toBase58()
+        : "",
+    [activeAccounts, accounts],
   );
   const balance = useMemo(
     () => (isReady ? _.sumBy(accounts, (item) => item.balance ?? 0) : 0),
@@ -40,11 +50,11 @@ export const DerivationPathButton = ({
       {fetchStatus === "fetching" && <Loader className={classes.loader} />}
       <div className={classes.panel}>
         <Typography variant="h5">{caption}</Typography>
-        <Typography>{truncateAddres(address)}</Typography>
+        <Typography>{truncateAddres(activeAddress)}</Typography>
       </div>
       <div className={classes.panel}>
         <Typography variant="h5">{printSol(balance)}</Typography>
-        <Typography>{`${accounts.length} accounts`}</Typography>
+        <Typography>{`${activeAccounts.length} accounts`}</Typography>
       </div>
     </Button>
   );
