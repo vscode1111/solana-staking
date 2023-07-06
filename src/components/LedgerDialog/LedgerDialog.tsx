@@ -86,6 +86,7 @@ export const LedgerDialog = observer(() => {
                 caption="m/44'/501'/0'/X'"
                 accounts={toJS(accounts3)}
                 fetchStatus={fetchStatus3}
+                hideNullBalance
                 onClick={() => setSelectedAccounts(accounts3)}
               />
             </>

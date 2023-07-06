@@ -10,12 +10,14 @@ interface DerivationPathButton extends ButtonProps {
   caption: string;
   accounts: LedgerHDWalletAccount[] | undefined;
   fetchStatus: StatusFetching;
+  hideNullBalance?: boolean;
 }
 
 export const DerivationPathButton = ({
   caption,
   accounts,
   fetchStatus,
+  hideNullBalance,
   ...rest
 }: DerivationPathButton) => {
   const { classes } = useDerivationPathButtonStyles();
@@ -32,8 +34,8 @@ export const DerivationPathButton = ({
       activeAccounts.length > 0
         ? activeAccounts[0].publicKey?.toBase58()
         : isReady
-        ? accounts[0].publicKey.toBase58()
-        : "",
+          ? accounts[0].publicKey.toBase58()
+          : "",
     [activeAccounts, accounts],
   );
   const balance = useMemo(
@@ -41,7 +43,7 @@ export const DerivationPathButton = ({
     [isReady, accounts],
   );
 
-  if (!(accounts && accounts.length > 0)) {
+  if (!(accounts && accounts.length > 0 && (!hideNullBalance || hideNullBalance && activeAccounts.length > 0))) {
     return null;
   }
 
