@@ -15,6 +15,8 @@ export const MyWallet = observer(() => {
   const { staking } = useStores();
   const { balance, isFetching } = staking;
 
+  console.log(111, wallet, wallet.wallet?.adapter?.name,  wallet.connecting);
+
   useEffect(() => {
     wallet.publicKey && staking.fetchBalance(wallet.publicKey);
   }, [wallet]);
@@ -25,6 +27,17 @@ export const MyWallet = observer(() => {
         <span className="button-wrapper">
           <WalletModalProvider>
             <WalletMultiButton />
+            <Button onClick={async () => {
+              if (wallet.connected) {
+                await wallet.disconnect();
+              }
+              // wallet.select('Solflare');
+              wallet.select('Phantom');
+              await wallet.connect();
+            }}>
+
+              Connect
+            </Button>
             {wallet.connected && (
               <Link to={`/${ROUTE.STAKE_ACCOUNTS}`}>
                 <Button>

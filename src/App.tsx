@@ -4,7 +4,6 @@ import "./styles.css";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
-import { clusterApiUrl } from "@solana/web3.js";
 import { MainRouter } from "@/views";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "@/themes";
@@ -13,6 +12,7 @@ import { LedgerDialog, Modals, TxModals } from "./components";
 import { observer } from "mobx-react";
 import { useStores } from "./hooks";
 import { BASE_RPC_URL } from "./consts";
+import { toJS } from "mobx";
 
 const endpoint = BASE_RPC_URL;
 
@@ -38,6 +38,8 @@ export const App = observer(() => {
         onConnecting: async (adapter) => {
           ledger.setAdapter(adapter);
           await modals.openModal(() => <LedgerDialog />);
+          const account = toJS(ledger.selectedAccount);
+          console.log(233, account, account?.publicKey.toBase58());
           return ledger.selectedAccount;
         },
       }),
