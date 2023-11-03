@@ -81,7 +81,7 @@ export class StakingStore extends BaseStore {
   public async fetchValidators() {
     await this.statusHandler(
       async () => {
-        this.validators = await solanaService.getCurrentValidators(10);
+        this.validators = await solanaService.getValidators(10);
       },
       "fetchStatus",
       "fetchError",

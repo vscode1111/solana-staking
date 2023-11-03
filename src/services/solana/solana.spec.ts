@@ -33,7 +33,14 @@ describe("@solana/web3.js", () => {
     console.log(printJson(stakeAccountInfo));
   });
 
-  it.only("getMultipleAccountInfo", async () => {
+  it.only("getAccountInfo for validator", async () => {
+    const stakeAccountInfo = await solana.getAccountInfo(new PublicKey('HNrA5MqfJMvGa1uQNV5AZcBDU3AijxCGCVgjPFA1hUEr'));
+    console.log(222, stakeAccountInfo);
+    expect(stakeAccountInfo).not.undefined;
+    console.log(printJson(stakeAccountInfo));
+  });
+
+  it("getMultipleAccountInfo", async () => {
     // const publicKeys = [
     //   new PublicKey("2BDWGp99mPJmHtGjrJ2c4HfEruy9idAxEwYa2VLyYoWP"),
     //   new PublicKey("BSHcqEiPpaczXz8yMzrogDWLkYNe2uFQopUzTQUveMQz"),
@@ -63,8 +70,8 @@ describe("@solana/web3.js", () => {
     console.log(balance);
   });
 
-  it("getCurrentValidators", async () => {
-    const validators = await solana.getCurrentValidators();
+  it("getValidators", async () => {
+    const validators = await solana.getValidators();
     expect(validators.length).greaterThan(0);
     console.log(printJson(validators[0]), validators.length);
   });

@@ -3,16 +3,14 @@ import {
   Authorized,
   Connection,
   Keypair,
-  LAMPORTS_PER_SOL,
   ParsedAccountData,
   PublicKey,
   StakeProgram,
   TransactionConfirmationStatus,
-  clusterApiUrl,
 } from "@solana/web3.js";
 import { InflationRewardNull, ParsedAccountInfo, RewardNull, StakeAccount } from "./types";
 import { mapAccountFn, mapRewardFn, mapValidatorFn } from "./utils";
-import { printJson, sleep } from "@/utils";
+import { sleep } from "@/utils";
 import { BASE_RPC_URL } from "@/consts";
 
 export class Solana {
@@ -25,6 +23,7 @@ export class Solana {
 
   public async getAccountInfo(userAccountPublicKey: PublicKey): Promise<ParsedAccountInfo> {
     const accountInfo = await this.connection.getParsedAccountInfo(userAccountPublicKey);
+    console.log(111, accountInfo);
     return (accountInfo.value?.data as ParsedAccountData).parsed as ParsedAccountInfo;
   }
 
@@ -94,7 +93,7 @@ export class Solana {
     return this.connection.getBalance(userAccountPublicKey);
   }
 
-  public async getCurrentValidators(limit?: number) {
+  public async getValidators(limit?: number) {
     const { current } = await this.connection.getVoteAccounts("recent");
     const sortedCurrent = current.sort((a, b) => b.activatedStake - a.activatedStake);
     return limit

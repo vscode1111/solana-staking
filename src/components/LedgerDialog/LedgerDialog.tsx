@@ -65,7 +65,7 @@ export const LedgerDialog = observer(() => {
           ) : (
             <>
               <DerivationPathButton
-                caption="m/44'/501+'"
+                caption="m/44'/501'"
                 accounts={toJS(accounts0)}
                 fetchStatus={fetchStatus0}
                 onClick={() => setSelectedAccounts(accounts0)}
